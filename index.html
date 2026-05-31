@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drip n Dine — Flavor With Main Character Energy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet"/>
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black:   #0C0C0C;
+      --offblack: #141414;
+      --gold:    #C6973F;
+      --gold-lt: #E4B96A;
+      --peach:   #F2A07B;
+      --peach-lt:#FDDCC8;
+      --cream:   #FDF6EF;
+      --white:   #FFFFFF;
+      --gray:    #888888;
+      --gray-lt: #CCCCCC;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    body.loading { overflow: hidden; }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+
+    /* ─── PRELOADER ─────────────────────────────────────────────── */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--black);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      transition: opacity 0.6s var(--ease-out-expo), visibility 0.6s;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; }
+
+    .pre-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      color: var(--white);
+      overflow: hidden;
+    }
+    .pre-brand span {
+      display: inline-block;
+      transform: translateY(110%);
+      animation: slideUp 0.9s var(--ease-out-expo) 0.2s forwards;
+    }
+    .pre-brand em {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .pre-tagline {
+      font-size: 0.75rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gray);
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.9s forwards;
+    }
+
+    .pre-bar-wrap {
+      width: 180px;
+      height: 1px;
+      background: #222;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeIn 0.4s ease 0.8s forwards;
+    }
+    .pre-bar {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--gold), var(--peach));
+      animation: loadBar 1.6s var(--ease-out-expo) 0.8s forwards;
+    }
+
+    @keyframes slideUp {
+      to { transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    @keyframes loadBar {
+      to { width: 100%; }
+    }
+
+    /* ─── NAV ───────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.5rem 4vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease;
+    }
+    nav.scrolled {
+      background: rgba(12,12,12,0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 4vw;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 1.35rem;
+      letter-spacing: -0.01em;
+    }
+    .nav-logo em { color: var(--gold); font-style: italic; }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray-lt);
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--gold);
+      transition: width 0.3s var(--ease-out-expo);
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-cta {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--gold);
+      padding: 0.6rem 1.4rem;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .nav-cta:hover { background: var(--gold-lt); transform: translateY(-1px); }
+
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .nav-hamburger span { display: block; width: 22px; height: 1.5px; background: var(--white); transition: all 0.3s; }
+
+    /* ─── HERO ──────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100svh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 12vh 4vw 10vh 6vw;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--peach);
+      margin-bottom: 1.8rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: heroReveal 0.7s var(--ease-out-expo) 2.6s forwards;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 28px; height: 1px;
+      background: var(--peach);
+      margin-right: 0.8rem;
+      vertical-align: middle;
+    }
+
+    .hero-h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(3.2rem, 6.5vw, 6rem);
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    .hero-h1 .line {
+      display: block;
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    .hero-h1 .line:nth-child(1) { animation: heroReveal 0.85s var(--ease-out-expo) 2.7s forwards; }
+    .hero-h1 .line:nth-child(2) { animation: heroReveal 0.85s var(--ease-out-expo) 2.85s forwards; }
+    .hero-h1 .line:nth-child(3) { animation: heroReveal 0.85s var(--ease-out-expo) 3.0s forwards; }
+    .hero-h1 em { color: var(--gold); font-style: italic; }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--gray-lt);
+      max-width: 380px;
+      line-height: 1.75;
+      margin-bottom: 3rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: heroReveal 0.7s var(--ease-out-expo) 3.2s forwards;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: heroReveal 0.7s var(--ease-out-expo) 3.35s forwards;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--gold);
+      color: var(--black);
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 1rem 2.2rem;
+      transition: background 0.25s, transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      background: var(--gold-lt);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(198,151,63,0.25);
+    }
+    .btn-ghost {
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray-lt);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.2s;
+    }
+    .btn-ghost:hover { color: var(--white); }
+    .btn-ghost svg { transition: transform 0.2s; }
+    .btn-ghost:hover svg { transform: translateX(4px); }
+
+    /* Hero right — visual panel */
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-right-inner {
+      position: absolute;
+      inset: 0;
+      background: var(--offblack);
+    }
+    /* Decorative food visual using CSS */
+    .hero-visual {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-visual-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 60% 40%, rgba(242,160,123,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 80% 70%, rgba(198,151,63,0.12) 0%, transparent 60%);
+    }
+    .hero-visual-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    /* Big number decoration */
+    .hero-deco-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 22vw;
+      font-weight: 900;
+      color: rgba(255,255,255,0.025);
+      line-height: 1;
+      user-select: none;
+      position: absolute;
+    }
+    /* Floating badges */
+    .hero-badge {
+      position: absolute;
+      background: var(--offblack);
+      border: 1px solid #2a2a2a;
+      padding: 1rem 1.4rem;
+      font-size: 0.78rem;
+      opacity: 0;
+      animation: badgeFade 0.6s ease forwards;
+    }
+    .hero-badge-1 {
+      top: 22%; left: 8%;
+      animation-delay: 3.4s;
+    }
+    .hero-badge-2 {
+      bottom: 28%; right: 8%;
+      animation-delay: 3.6s;
+    }
+    .hero-badge .badge-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 0.3rem;
+    }
+    .hero-badge .badge-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    @keyframes badgeFade {
+      to { opacity: 1; }
+    }
+
+    /* Food cards stack in hero */
+    .hero-cards {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      padding: 8vh 5vw;
+      justify-content: center;
+      height: 100%;
+    }
+    .hero-food-card {
+      background: rgba(20,20,20,0.8);
+      border: 1px solid #1e1e1e;
+      padding: 1.1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transform: translateX(30px);
+      transition: border-color 0.25s, background 0.25s;
+    }
+    .hero-food-card:hover {
+      border-color: #333;
+      background: rgba(30,30,30,0.9);
+    }
+    .hero-food-card:nth-child(1) { animation: slideLeft 0.6s var(--ease-out-expo) 3.0s forwards; }
+    .hero-food-card:nth-child(2) { animation: slideLeft 0.6s var(--ease-out-expo) 3.15s forwards; }
+    .hero-food-card:nth-child(3) { animation: slideLeft 0.6s var(--ease-out-expo) 3.3s forwards; }
+    .hero-food-card:nth-child(4) { animation: slideLeft 0.6s var(--ease-out-expo) 3.45s forwards; }
+    .hero-food-card:nth-child(5) { animation: slideLeft 0.6s var(--ease-out-expo) 3.6s forwards; }
+
+    .food-card-icon {
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .food-card-info { flex: 1; }
+    .food-card-name {
+      font-weight: 500;
+      font-size: 0.88rem;
+      color: var(--white);
+      margin-bottom: 0.15rem;
+    }
+    .food-card-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      color: var(--gray);
+      text-transform: uppercase;
+    }
+    .food-card-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    @keyframes heroReveal {
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes slideLeft {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Hero bottom strip */
+    .hero-strip {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--peach), var(--gold), var(--peach));
+      opacity: 0;
+      animation: fadeIn 0.8s ease 3.8s forwards;
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 6vw;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray);
+      opacity: 0;
+      animation: heroReveal 0.6s ease 3.9s forwards;
+    }
+    .scroll-line {
+      width: 36px; height: 1px;
+      background: var(--gray);
+      position: relative;
+      overflow: hidden;
+    }
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: var(--gold);
+      animation: scrollPulse 2s ease 4s infinite;
+    }
+    @keyframes scrollPulse {
+      0%   { left: -100%; }
+      50%  { left: 0; }
+      100% { left: 100%; }
+    }
+
+    /* ─── MARQUEE ────────────────────────────────────────────────── */
+    .marquee-section {
+      padding: 1.2rem 0;
+      background: var(--gold);
+      overflow: hidden;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 3rem;
+      animation: marquee 18s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--black);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    .marquee-item span { opacity: 0.45; }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ─── ABOUT STRIP ────────────────────────────────────────────── */
+    #about {
+      padding: 8rem 6vw;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .about-left .section-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--peach);
+      margin-bottom: 1.6rem;
+    }
+    .about-left h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.8rem;
+    }
+    .about-left h2 em { color: var(--gold); font-style: italic; }
+    .about-left p {
+      color: var(--gray-lt);
+      font-size: 1rem;
+      line-height: 1.85;
+      max-width: 480px;
+    }
+    .about-right {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: #1a1a1a;
+    }
+    .about-stat {
+      background: var(--offblack);
+      padding: 2.4rem 2rem;
+    }
+    .about-stat .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .about-stat .label {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+    .about-stat:nth-child(1) .num { color: var(--gold); }
+    .about-stat:nth-child(2) .num { color: var(--peach); }
+    .about-stat:nth-child(3) .num { color: var(--peach); }
+    .about-stat:nth-child(4) .num { color: var(--gold); }
+
+    /* ─── MENU ───────────────────────────────────────────────────── */
+    #menu {
+      padding: 8rem 6vw;
+    }
+    .menu-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 3.5rem;
+      gap: 2rem;
+    }
+    .menu-header-left .section-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--peach);
+      margin-bottom: 1rem;
+    }
+    .menu-header-left h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .menu-header-left h2 em { color: var(--gold); font-style: italic; }
+
+    /* Tab nav */
+    .tab-nav {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #1e1e1e;
+      margin-bottom: 3rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      font-size: 0.76rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray);
+      padding: 1rem 1.6rem;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .tab-btn.active {
+      color: var(--white);
+      border-bottom-color: var(--gold);
+    }
+    .tab-btn:hover:not(.active) { color: var(--gray-lt); }
+
+    /* Menu panels */
+    .menu-panel { display: none; }
+    .menu-panel.active { display: block; }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px;
+      background: #1a1a1a;
+    }
+    .menu-item {
+      background: var(--offblack);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 2px;
+      background: linear-gradient(90deg, var(--peach), var(--gold));
+      transition: width 0.35s var(--ease-out-expo);
+    }
+    .menu-item:hover { background: #181818; }
+    .menu-item:hover::before { width: 100%; }
+
+    .item-emoji { font-size: 2rem; line-height: 1; }
+    .item-name {
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--white);
+    }
+    .item-sub {
+      font-size: 0.76rem;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .item-order {
+      margin-top: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding-top: 1rem;
+      border-top: 1px solid #242424;
+      transition: gap 0.2s;
+    }
+    .menu-item:hover .item-order { gap: 0.8rem; }
+
+    /* Combo grid (special layout) */
+    .combo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1px;
+      background: #1a1a1a;
+    }
+    .combo-item {
+      background: var(--offblack);
+      padding: 2.2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      transition: background 0.2s;
+      position: relative;
+    }
+    .combo-item::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--gold);
+      transition: height 0.35s var(--ease-out-expo);
+    }
+    .combo-item:hover { background: #181818; }
+    .combo-item:hover::after { height: 100%; }
+
+    .combo-badge {
+      display: inline-block;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--gold);
+      padding: 0.25rem 0.6rem;
+      font-weight: 500;
+      align-self: flex-start;
+    }
+    .combo-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+    }
+    .combo-desc {
+      font-size: 0.82rem;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+    .combo-order {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--peach);
+      padding-top: 1rem;
+      border-top: 1px solid #242424;
+      margin-top: auto;
+      transition: gap 0.2s;
+    }
+    .combo-item:hover .combo-order { gap: 0.8rem; }
+
+    /* ─── HOW TO ORDER ───────────────────────────────────────────── */
+    #how-to-order {
+      padding: 8rem 6vw;
+      background: var(--offblack);
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .order-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+    .order-header .section-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--peach);
+      margin-bottom: 1rem;
+    }
+    .order-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .order-header h2 em { color: var(--gold); font-style: italic; }
+
+    .order-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      position: relative;
+    }
+    .order-steps::before {
+      content: '';
+      position: absolute;
+      top: 2.5rem;
+      left: calc(100% / 6);
+      right: calc(100% / 6);
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .order-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 3rem;
+    }
+    .step-num {
+      width: 5rem; height: 5rem;
+      border: 1px solid #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+      background: var(--offblack);
+    }
+    .step-num::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border: 1px solid #2a2a2a;
+    }
+    .step-title {
+      font-weight: 500;
+      font-size: 1rem;
+      margin-bottom: 0.6rem;
+      color: var(--white);
+    }
+    .step-body {
+      font-size: 0.85rem;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      padding: 5rem 6vw 3rem;
+      border-top: 1px solid #1a1a1a;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
+    }
+    .footer-brand .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      margin-bottom: 1rem;
+    }
+    .footer-brand .logo em { color: var(--gold); font-style: italic; }
+    .footer-brand p {
+      font-size: 0.85rem;
+      color: var(--gray);
+      line-height: 1.8;
+      max-width: 300px;
+      margin-bottom: 1.5rem;
+    }
+    .footer-social {
+      display: flex;
+      gap: 1rem;
+    }
+    .social-link {
+      width: 36px; height: 36px;
+      border: 1px solid #2a2a2a;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+      color: var(--gray);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .social-link:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .footer-col h4 {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 1.4rem;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .footer-col ul a {
+      font-size: 0.88rem;
+      color: var(--gray-lt);
+      transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: var(--gold); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 2rem;
+      border-top: 1px solid #1a1a1a;
+    }
+    .footer-bottom p {
+      font-size: 0.75rem;
+      color: var(--gray);
+    }
+    .footer-tagline {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    /* ─── REVEAL ANIMATIONS ─────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ─── WHATSAPP FLOAT ─────────────────────────────────────────── */
+    .wa-float {
+      position: fixed;
+      bottom: 2.5rem;
+      right: 2.5rem;
+      z-index: 90;
+      width: 52px; height: 52px;
+      background: #25D366;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 24px rgba(37,211,102,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .wa-float:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 12px 32px rgba(37,211,102,0.4);
+    }
+    .wa-float svg { width: 26px; height: 26px; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      #hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .hero-left {
+        padding: 14vh 6vw 4vh;
+        min-height: 100svh;
+        justify-content: flex-end;
+      }
+      .hero-right {
+        height: 60vh;
+      }
+      .hero-cards {
+        padding: 4vh 6vw;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .hero-food-card {
+        flex: 1 1 48%;
+      }
+      #about {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        padding: 5rem 6vw;
+      }
+      .about-right {
+        grid-template-columns: 1fr 1fr;
+      }
+      .order-steps {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .order-steps::before { display: none; }
+      .footer-top {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+    }
+    @media (max-width: 600px) {
+      .menu-grid,
+      .combo-grid {
+        grid-template-columns: 1fr;
+      }
+      .about-right {
+        grid-template-columns: 1fr;
+      }
+      .hero-cards {
+        flex-direction: column;
+      }
+      .hero-food-card { flex: 1 1 100%; }
+    }
+  </style>
+</head>
+<body class="loading">
+
+  <!-- PRELOADER -->
+  <div id="preloader" role="status" aria-label="Loading">
+    <div class="pre-brand">
+      <span>Drip <em>n</em> Dine</span>
+    </div>
+    <div class="pre-tagline">Flavor With Main Character Energy</div>
+    <div class="pre-bar-wrap">
+      <div class="pre-bar"></div>
+    </div>
+  </div>
+
+  <!-- WHATSAPP FLOAT -->
+  <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20place%20an%20order." class="wa-float" target="_blank" rel="noopener" aria-label="Order on WhatsApp">
+    <svg viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">Drip <em>n</em> Dine</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="how-to-order.html">How to Order</a></li>
+      <li><a href="our-story.html">Our Story</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20place%20an%20order." class="nav-cta" target="_blank" rel="noopener">Order Now</a>
+    <div class="nav-hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero" aria-label="Hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Now Open in Lagos</p>
+      <h1 class="hero-h1">
+        <span class="line">Flavor</span>
+        <span class="line">With <em>Main</em></span>
+        <span class="line">Character Energy.</span>
+      </h1>
+      <p class="hero-sub">Breadwarma, Cheesesteak, Boba Tea, Milkshakes &amp; Combo deals built for the bold. Order straight to your WhatsApp.</p>
+      <div class="hero-actions">
+        <a href="#menu" class="btn-primary">
+          Explore Menu
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20place%20an%20order." class="btn-ghost" target="_blank" rel="noopener">
+          Order on WhatsApp
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="scroll-hint">
+        <span class="scroll-line"></span>
+        Scroll
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-right-inner">
+        <div class="hero-visual">
+          <div class="hero-visual-bg"></div>
+          <div class="hero-visual-grid"></div>
+          <div class="hero-deco-num">✦</div>
+        </div>
+        <!-- Floating badge -->
+        <div class="hero-badge hero-badge-1">
+          <div class="badge-label">Bestseller</div>
+          <div class="badge-val">Suya Cheesesteak</div>
+        </div>
+        <div class="hero-badge hero-badge-2">
+          <div class="badge-label">Fan Favourite</div>
+          <div class="badge-val">Taro Boba Tea</div>
+        </div>
+        <!-- Food preview cards -->
+        <div class="hero-cards">
+          <div class="hero-food-card">
+            <div class="food-card-icon">🥙</div>
+            <div class="food-card-info">
+              <div class="food-card-name">Chicken Breadwarma</div>
+              <div class="food-card-tag">Breadwarma</div>
+            </div>
+            <div class="food-card-dot"></div>
+          </div>
+          <div class="hero-food-card">
+            <div class="food-card-icon">🥩</div>
+            <div class="food-card-info">
+              <div class="food-card-name">Suya Cheesesteak</div>
+              <div class="food-card-tag">Cheesesteak</div>
+            </div>
+            <div class="food-card-dot"></div>
+          </div>
+          <div class="hero-food-card">
+            <div class="food-card-icon">🧋</div>
+            <div class="food-card-info">
+              <div class="food-card-name">Taro Boba Tea</div>
+              <div class="food-card-tag">Boba Tea</div>
+            </div>
+            <div class="food-card-dot"></div>
+          </div>
+          <div class="hero-food-card">
+            <div class="food-card-icon">🍓</div>
+            <div class="food-card-info">
+              <div class="food-card-name">Strawberry Milkshake</div>
+              <div class="food-card-tag">Milkshake</div>
+            </div>
+            <div class="food-card-dot"></div>
+          </div>
+          <div class="hero-food-card">
+            <div class="food-card-icon">⚡</div>
+            <div class="food-card-info">
+              <div class="food-card-name">Monster Package</div>
+              <div class="food-card-tag">Combo Deal</div>
+            </div>
+            <div class="food-card-dot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-strip"></div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-section" aria-hidden="true">
+    <div class="marquee-track">
+      <!-- doubled for infinite loop -->
+      <div class="marquee-item">Breadwarma <span>✦</span></div>
+      <div class="marquee-item">Cheesesteak <span>✦</span></div>
+      <div class="marquee-item">Boba Tea <span>✦</span></div>
+      <div class="marquee-item">Milkshakes <span>✦</span></div>
+      <div class="marquee-item">Combo Deals <span>✦</span></div>
+      <div class="marquee-item">Order on WhatsApp <span>✦</span></div>
+      <div class="marquee-item">Main Character Energy <span>✦</span></div>
+      <div class="marquee-item">Drip n Dine <span>✦</span></div>
+      <div class="marquee-item">Breadwarma <span>✦</span></div>
+      <div class="marquee-item">Cheesesteak <span>✦</span></div>
+      <div class="marquee-item">Boba Tea <span>✦</span></div>
+      <div class="marquee-item">Milkshakes <span>✦</span></div>
+      <div class="marquee-item">Combo Deals <span>✦</span></div>
+      <div class="marquee-item">Order on WhatsApp <span>✦</span></div>
+      <div class="marquee-item">Main Character Energy <span>✦</span></div>
+      <div class="marquee-item">Drip n Dine <span>✦</span></div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about" aria-label="About">
+    <div class="about-left reveal">
+      <p class="section-tag">Who We Are</p>
+      <h2>We don't do<br><em>basic flavors.</em></h2>
+      <p>Drip n Dine was built for people who eat with personality. Every item on our menu is crafted to hit different — bold, fresh, and unapologetically good. This isn't just food. It's a whole vibe.</p>
+    </div>
+    <div class="about-right reveal reveal-delay-2">
+      <div class="about-stat">
+        <div class="num">5+</div>
+        <div class="label">Boba flavors</div>
+      </div>
+      <div class="about-stat">
+        <div class="num">7</div>
+        <div class="label">Combo deals</div>
+      </div>
+      <div class="about-stat">
+        <div class="num">5</div>
+        <div class="label">Milkshakes</div>
+      </div>
+      <div class="about-stat">
+        <div class="num">1</div>
+        <div class="label">Standard — excellence</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section id="menu" aria-label="Menu">
+    <div class="menu-header reveal">
+      <div class="menu-header-left">
+        <p class="section-tag">The Full Menu</p>
+        <h2>What We're <em>Serving</em></h2>
+      </div>
+    </div>
+
+    <div class="tab-nav" role="tablist" aria-label="Menu categories">
+      <button class="tab-btn active" data-tab="combos" role="tab" aria-selected="true">Combo Deals</button>
+      <button class="tab-btn" data-tab="breadwarma" role="tab" aria-selected="false">Breadwarma</button>
+      <button class="tab-btn" data-tab="cheesesteak" role="tab" aria-selected="false">Cheesesteak</button>
+      <button class="tab-btn" data-tab="boba" role="tab" aria-selected="false">Boba Tea</button>
+      <button class="tab-btn" data-tab="drinks" role="tab" aria-selected="false">Drinks</button>
+      <button class="tab-btn" data-tab="milkshake" role="tab" aria-selected="false">Milkshakes</button>
+    </div>
+
+    <!-- Combo Deals -->
+    <div class="menu-panel active" id="tab-combos" role="tabpanel">
+      <div class="combo-grid">
+        <div class="combo-item">
+          <span class="combo-badge">Classic</span>
+          <div class="combo-name">The Classic Steak Pair</div>
+          <div class="combo-desc">Half Cheesesteak + Milk Tea Boba</div>
+          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20The%20Classic%20Steak%20Pair." class="combo-order" target="_blank" rel="noopener">Order via WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="combo-item">
+          <span class="combo-badge">Popular</span>
+          <div class="combo-name">Street Fix</div>
+          <div class="combo-desc">Half Breadwarma + Any Drink or Milkshake of choice</div>
+          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Street%20Fix." class="combo-order" target="_blank" rel="noopener">Order via WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="combo-item">
+          <span class="combo-badge">Fan Fav</span>
+          <div class="combo-name">Loaded Bite</div>
+          <div class="combo-desc">Full Cheesesteak + Any Drink or Milkshake of choice</div>
+          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Loaded%20Bite." class="combo-order" target="_blank" rel="noopener">Order via WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="combo-item">
+          <span class="combo-badge">Heavy</span>
+          <div class="combo-name">Big Belle Cravings</div>
+          <div class="combo-desc">Full Breadwarma + Any Drink or Milkshake of choice</div>
+          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Big%20Belle%20Cravings." class="combo-order" target="_blank" rel="noopener">Order via WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="combo-item">
+          <span class="combo-badge">Duo</span>
+          <div class="combo-name">Double Trouble</div>
+          <div class="combo-desc">Half Cheesesteak + Half Breadwarma</div>
+          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Double%20Trouble." class="combo-order" target="_blank" rel="noopener">Order via WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="combo-item">
+          <span class="combo-badge">Go Big</span>
+          <div class="combo-name">Monster Package</div>
+          <div class="combo-desc">Half Cheesesteak + Half Breadwarma + Any Drink or Milkshake of choice</div>
+          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Monster%20Package." class="combo-order" target="_blank" rel="noopener">Order via WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="combo-item">
+          <span class="combo-badge">Ultimate</span>
+          <div class="combo-name">Triple Threat</div>
+          <div class="combo-desc">Full Cheesesteak + Full Breadwarma + Any Drink or Milkshake of choice</div>
+          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Triple%20Threat." class="combo-order" target="_blank" rel="noopener">Order via WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breadwarma -->
+    <div class="menu-panel" id="tab-breadwarma" role="tabpanel">
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="item-emoji">🥙</div>
+          <div class="item-name">Chicken Breadwarma</div>
+          <div class="item-sub">Breadwarma</div>
+          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Chicken%20Breadwarma." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="menu-item">
+          <div class="item-emoji">🔥</div>
+          <div class="item-name">Suya Breadwarma</div>
+          <div class="item-sub">Breadwarma</div>
+          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Suya%20Breadwarma." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cheesesteak -->
+    <div class="menu-panel" id="tab-cheesesteak" role="tabpanel">
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="item-emoji">🥩</div>
+          <div class="item-name">Suya Cheesesteak</div>
+          <div class="item-sub">Cheesesteak</div>
+          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Suya%20Cheesesteak." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+        <div class="menu-item">
+          <div class="item-emoji">🍗</div>
+          <div class="item-name">Chicken Cheesesteak</div>
+          <div class="item-sub">Cheesesteak</div>
+          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Chicken%20Cheesesteak." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boba Tea -->
+    <div class="menu-panel" id="tab-boba" role="tabpanel">
+      <div class="menu-grid">
+        <div class="menu-item"><div class="item-emoji">🧋</div><div class="item-name">Milk Tea Boba</div><div class="item-sub">Boba Tea</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Milk%20Tea%20Boba." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-item"><div class="item-emoji">☕</div><div class="item-name">Mocha Boba Tea</div><div class="item-sub">Boba Tea · Chocolate</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Mocha%20Boba%20Tea." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-item"><div class="item-emoji">🍓</div><div class="item-name">Strawberry Boba Tea</div><div class="item-sub">Boba Tea</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Strawberry%20Boba%20Tea." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-item"><div class="item-emoji">🧊</div><div class="item-name">Iced Latte Boba</div><div class="item-sub">Boba Tea</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Iced%20Latte%20Boba." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-item"><div class="item-emoji">💜</div><div class="item-name">Taro Boba Tea</div><div class="item-sub">Boba Tea</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Taro%20Boba%20Tea." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-item"><div class="item-emoji">🍵</div><div class="item-name">Matcha Boba Tea</div><div class="item-sub">Boba Tea</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Matcha%20Boba%20Tea." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-item"><div class="item-emoji">🍮</div><div class="item-name">Caramel Boba Tea</div><div class="item-sub">Boba Tea</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Caramel%20Boba%20Tea." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+      </div>
+    </div>
+
+    <!-- Drinks -->
+    <div class="menu-panel" id="tab-drinks" role="tabpanel">
+      <div class="menu-grid">
+        <div class="menu-item"><div class="item-emoji">🍋</div><div class="item-name">Lemonade</div><div class="item-sub">Drinks</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Lemonade." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-item"><div class="item-emoji">☕</div><div class="item-name">Iced Coffee (Americano)</div><div class="item-sub">Drinks</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Iced%20Coffee%20Americano." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-item"><div class="item-emoji">🧊</div><div class="item-name">Iced Latte</div><div class="item-sub">Drinks</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Iced%20Latte." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+      </div>
+    </div>
+
+    <!-- Milkshakes -->
+    <div class="menu-panel" id="tab-milkshake" role="tabpanel">
+      <div class="menu-grid">
+        <div class="menu-item"><div class="item-emoji">🍓</div><div class="item-name">Strawberry Milkshake</div><div class="item-sub">Milkshake</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Strawberry%20Milkshake." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-item"><div class="item-emoji">🍮</div><div class="item-name">Caramel Vanilla Milkshake</div><div class="item-sub">Milkshake</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Caramel%20Vanilla%20Milkshake." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-item"><div class="item-emoji">🍫</div><div class="item-name">Chocolate Milkshake</div><div class="item-sub">Milkshake</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Chocolate%20Milkshake." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-item"><div class="item-emoji">🍪</div><div class="item-name">Oreo Milkshake</div><div class="item-sub">Milkshake</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Oreo%20Milkshake." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-item"><div class="item-emoji">💜</div><div class="item-name">Taro Milkshake</div><div class="item-sub">Milkshake</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Taro%20Milkshake." class="item-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW TO ORDER -->
+  <section id="how-to-order" aria-label="How to Order">
+    <div class="order-header reveal">
+      <p class="section-tag">Simple as That</p>
+      <h2>How to <em>Order</em></h2>
+    </div>
+    <div class="order-steps">
+      <div class="order-step reveal">
+        <div class="step-num">01</div>
+        <div class="step-title">Browse the Menu</div>
+        <p class="step-body">Pick your meal from our full lineup — Breadwarma, Cheesesteak, Boba, Drinks, Milkshakes, or any of our Combo Deals.</p>
+      </div>
+      <div class="order-step reveal reveal-delay-1">
+        <div class="step-num">02</div>
+        <div class="step-title">Tap Order</div>
+        <p class="step-body">Hit the Order button on any item. It opens WhatsApp with your order already typed in. No forms, no fuss.</p>
+      </div>
+      <div class="order-step reveal reveal-delay-2">
+        <div class="step-num">03</div>
+        <div class="step-title">We Handle the Rest</div>
+        <p class="step-body">Send the message and we'll confirm your order and delivery details directly in WhatsApp. That's it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">Drip <em>n</em> Dine</div>
+        <p>Flavor With Main Character Energy. Bold food for bold people — now ordering via WhatsApp in Lagos.</p>
+        <div class="footer-social">
+          <a href="#" class="social-link" aria-label="Instagram">IG</a>
+          <a href="#" class="social-link" aria-label="TikTok">TK</a>
+          <a href="#" class="social-link" aria-label="Twitter/X">X</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Menu</h4>
+        <ul>
+          <li><a href="#" onclick="switchTab('combos')">Combo Deals</a></li>
+          <li><a href="#" onclick="switchTab('breadwarma')">Breadwarma</a></li>
+          <li><a href="#" onclick="switchTab('cheesesteak')">Cheesesteak</a></li>
+          <li><a href="#" onclick="switchTab('boba')">Boba Tea</a></li>
+          <li><a href="#" onclick="switchTab('milkshake')">Milkshakes</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="our-story.html">Our Story</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="https://wa.me/2347053522778" target="_blank" rel="noopener">Order on WhatsApp</a></li>
+          <li><a href="tel:09064273679">Call Us: 09064273679</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Drip n Dine. All rights reserved. Built by <a href="#" style="color:var(--gold);transition:opacity 0.2s;" onmouseover="this.style.opacity=0.7" onmouseout="this.style.opacity=1">Prexoria</a></p>
+      <span class="footer-tagline">Flavor With Main Character Energy</span>
+    </div>
+  </footer>
+
+  <script>
+    // ─── PRELOADER ──────────────────────────────────────────────────
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('preloader').classList.add('hidden');
+        document.body.classList.remove('loading');
+      }, 2200);
+    });
+
+    // ─── NAV SCROLL ─────────────────────────────────────────────────
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // ─── TABS ───────────────────────────────────────────────────────
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.menu-panel');
+
+    function switchTab(id) {
+      tabBtns.forEach(b => {
+        const active = b.dataset.tab === id;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-selected', active);
+      });
+      tabPanels.forEach(p => {
+        p.classList.toggle('active', p.id === `tab-${id}`);
+      });
+      document.getElementById('menu').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    // ─── SCROLL REVEAL ──────────────────────────────────────────────
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revealObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => revealObs.observe(el));
+
+    // ─── HAMBURGER (mobile) ─────────────────────────────────────────
+    const hamburger = document.getElementById('hamburger');
+    const navLinks  = document.querySelector('.nav-links');
+    let menuOpen = false;
+    hamburger.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      if (menuOpen) {
+        Object.assign(navLinks.style, { display: 'flex', flexDirection: 'column', position: 'absolute', top: '100%', left: 0, right: 0, background: '#141414', padding: '1.5rem 6vw', borderTop: '1px solid #1e1e1e', gap: '1.2rem' });
+      } else {
+        navLinks.style.display = 'none';
+      }
+    });
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      menuOpen = false; navLinks.style.display = 'none';
+    }));
+  </script>
+</body>
+</html>
