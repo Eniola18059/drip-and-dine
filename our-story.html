@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Story — Drip n Dine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black:    #0C0C0C;
+      --offblack: #141414;
+      --gold:     #C6973F;
+      --gold-lt:  #E4B96A;
+      --peach:    #F2A07B;
+      --peach-lt: #FDDCC8;
+      --cream:    #FDF6EF;
+      --white:    #FFFFFF;
+      --gray:     #888888;
+      --gray-lt:  #CCCCCC;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+
+    /* ── NAV ───────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.5rem 4vw;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.4s ease, padding 0.4s ease;
+    }
+    nav.scrolled { background: rgba(12,12,12,0.95); backdrop-filter: blur(10px); padding: 1rem 4vw; border-bottom: 1px solid #1e1e1e; }
+    .nav-logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.35rem; letter-spacing: -0.01em; }
+    .nav-logo em { color: var(--gold); font-style: italic; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-lt); transition: color 0.2s; position: relative; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -3px; left: 0; width: 0; height: 1px; background: var(--gold); transition: width 0.3s var(--ease-out-expo); }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { color: var(--gold); }
+    .nav-links a.active::after { width: 100%; }
+    .nav-cta { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--black); background: var(--gold); padding: 0.6rem 1.4rem; transition: background 0.25s, transform 0.2s; }
+    .nav-cta:hover { background: var(--gold-lt); transform: translateY(-1px); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .nav-hamburger span { display: block; width: 22px; height: 1.5px; background: var(--white); transition: all 0.3s; }
+
+    /* ── PAGE HERO ─────────────────────────────────────────────── */
+    #page-hero {
+      padding: 18vh 6vw 10vh;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 50% 80% at 80% 50%, rgba(242,160,123,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 30% 60% at 10% 80%, rgba(198,151,63,0.06) 0%, transparent 60%);
+    }
+    .page-hero-grid {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .page-hero-inner { position: relative; z-index: 2; max-width: 760px; }
+    .page-eyebrow {
+      font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--peach);
+      margin-bottom: 1.8rem; display: flex; align-items: center; gap: 0.8rem;
+      opacity: 0; transform: translateY(20px); animation: revealUp 0.7s var(--ease-out-expo) 0.05s forwards;
+    }
+    .page-eyebrow::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--peach); }
+    .page-hero-inner h1 {
+      font-family: 'Playfair Display', serif; font-size: clamp(3rem, 7vw, 6rem);
+      font-weight: 900; line-height: 1.0; letter-spacing: -0.02em; margin-bottom: 2rem;
+    }
+    .page-hero-inner h1 .line {
+      display: block; overflow: hidden;
+    }
+    .page-hero-inner h1 .line span {
+      display: block; opacity: 0; transform: translateY(100%);
+    }
+    .page-hero-inner h1 .line:nth-child(1) span { animation: revealUp 0.85s var(--ease-out-expo) 0.08s forwards; }
+    .page-hero-inner h1 .line:nth-child(2) span { animation: revealUp 0.85s var(--ease-out-expo) 0.14s forwards; }
+    .page-hero-inner h1 em { color: var(--gold); font-style: italic; }
+    .page-hero-inner p {
+      font-size: 1.1rem; color: var(--gray-lt); line-height: 1.85; max-width: 560px;
+      opacity: 0; transform: translateY(20px); animation: revealUp 0.7s var(--ease-out-expo) 0.24s forwards;
+    }
+
+    /* Deco number */
+    .hero-deco {
+      position: absolute; right: 4vw; top: 50%; transform: translateY(-50%);
+      font-family: 'Playfair Display', serif; font-size: 22vw; font-weight: 900;
+      color: rgba(255,255,255,0.018); line-height: 1; user-select: none; pointer-events: none;
+    }
+
+    @keyframes revealUp { to { opacity: 1; transform: none; } }
+
+    /* ── BRAND STRIP ───────────────────────────────────────────── */
+    .brand-strip {
+      padding: 1.2rem 0; background: var(--gold); overflow: hidden;
+    }
+    .strip-track {
+      display: flex; gap: 3rem;
+      animation: marquee 20s linear infinite; white-space: nowrap;
+    }
+    .strip-item {
+      display: flex; align-items: center; gap: 1.2rem;
+      font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--black); font-weight: 500; flex-shrink: 0;
+    }
+    .strip-item span { opacity: 0.4; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── ORIGIN SECTION ────────────────────────────────────────── */
+    #origin {
+      padding: 9rem 6vw;
+      display: grid; grid-template-columns: 1fr 1.1fr;
+      gap: 8rem; align-items: center;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .origin-left { position: relative; }
+    .origin-visual {
+      aspect-ratio: 4/5;
+      background: var(--offblack);
+      border: 1px solid #1e1e1e;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Abstract food art using CSS */
+    .origin-visual-inner {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 40% 60%, rgba(242,160,123,0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 50% at 70% 30%, rgba(198,151,63,0.15) 0%, transparent 55%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .origin-visual-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 7rem; font-weight: 900;
+      color: rgba(255,255,255,0.04);
+      user-select: none; text-align: center; line-height: 1;
+    }
+    /* Floating label on image */
+    .origin-label {
+      position: absolute; bottom: 2rem; left: -1.5rem;
+      background: var(--gold); color: var(--black);
+      padding: 1.2rem 1.8rem;
+    }
+    .origin-label .ol-num {
+      font-family: 'DM Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.1em; opacity: 0.6; margin-bottom: 0.3rem;
+    }
+    .origin-label .ol-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700;
+    }
+    /* Vertical text accent */
+    .origin-vert {
+      position: absolute; top: 2rem; right: -3.5rem;
+      font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gray); writing-mode: vertical-rl;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .origin-vert::before {
+      content: ''; display: block; width: 1px; height: 40px; background: var(--gray);
+    }
+
+    .origin-right .section-tag {
+      font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--peach); margin-bottom: 1.4rem;
+    }
+    .origin-right h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 900;
+      line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 2rem;
+    }
+    .origin-right h2 em { color: var(--gold); font-style: italic; }
+    .origin-right p {
+      font-size: 1rem; color: var(--gray-lt); line-height: 1.9;
+      margin-bottom: 1.4rem;
+    }
+    .origin-right p:last-of-type { margin-bottom: 2.5rem; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--gold); color: var(--black);
+      font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 1rem 2.2rem;
+      transition: background 0.25s, transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { background: var(--gold-lt); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(198,151,63,0.25); }
+
+    /* ── VALUES ────────────────────────────────────────────────── */
+    #values {
+      padding: 9rem 6vw;
+      background: var(--offblack);
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .values-header {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: end; margin-bottom: 5rem;
+    }
+    .values-header .section-tag {
+      font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--peach); margin-bottom: 1rem;
+    }
+    .values-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 900;
+      line-height: 1.15; letter-spacing: -0.02em;
+    }
+    .values-header h2 em { color: var(--gold); font-style: italic; }
+    .values-header p { font-size: 0.95rem; color: var(--gray); line-height: 1.8; }
+
+    .values-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: #1a1a1a;
+    }
+    .value-card {
+      background: var(--offblack); padding: 3rem 2.5rem;
+      position: relative; overflow: hidden;
+      transition: background 0.25s;
+    }
+    .value-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--peach), var(--gold));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s var(--ease-out-expo);
+    }
+    .value-card:hover { background: #181818; }
+    .value-card:hover::before { transform: scaleX(1); }
+
+    .value-num {
+      font-family: 'DM Mono', monospace; font-size: 0.7rem;
+      letter-spacing: 0.12em; color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+    .value-icon { font-size: 2.2rem; margin-bottom: 1.2rem; }
+    .value-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem; font-weight: 700; margin-bottom: 1rem;
+    }
+    .value-body { font-size: 0.88rem; color: var(--gray); line-height: 1.8; }
+
+    /* ── FOUNDER ───────────────────────────────────────────────── */
+    #founder {
+      padding: 9rem 6vw;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .founder-inner {
+      display: grid; grid-template-columns: 1.1fr 1fr;
+      gap: 8rem; align-items: center;
+    }
+    .founder-text .section-tag {
+      font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--peach); margin-bottom: 1.4rem;
+    }
+    .founder-text h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 900;
+      line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 2rem;
+    }
+    .founder-text h2 em { color: var(--gold); font-style: italic; }
+    .founder-text p { font-size: 1rem; color: var(--gray-lt); line-height: 1.9; margin-bottom: 1.4rem; }
+
+    /* Pull quote */
+    .founder-quote {
+      margin: 2.5rem 0;
+      padding: 2rem 2.5rem;
+      border-left: 3px solid var(--gold);
+      background: var(--offblack);
+    }
+    .founder-quote p {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem; font-style: italic; color: var(--white);
+      line-height: 1.6; margin-bottom: 0;
+    }
+    .founder-quote cite {
+      display: block; margin-top: 1rem;
+      font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold); font-style: normal;
+    }
+
+    .founder-visual { position: relative; }
+    .founder-img-wrap {
+      aspect-ratio: 3/4;
+      background: var(--offblack);
+      border: 1px solid #1e1e1e;
+      position: relative; overflow: hidden;
+    }
+    .founder-img-inner {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 40%, rgba(198,151,63,0.12) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 40% at 80% 80%, rgba(242,160,123,0.08) 0%, transparent 55%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .founder-placeholder {
+      text-align: center;
+    }
+    .founder-placeholder-icon {
+      font-size: 5rem; margin-bottom: 1rem; opacity: 0.3;
+    }
+    .founder-placeholder-text {
+      font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--gray); opacity: 0.6;
+    }
+
+    /* Name tag below photo */
+    .founder-name-tag {
+      position: absolute; bottom: -1px; left: 0; right: 0;
+      background: var(--black); border-top: 1px solid #2a2a2a;
+      padding: 1.4rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .founder-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700;
+    }
+    .founder-role {
+      font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ── PROMISE / CTA ─────────────────────────────────────────── */
+    #promise {
+      padding: 9rem 6vw;
+      background: var(--offblack);
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .promise-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 50%, rgba(198,151,63,0.06) 0%, transparent 65%);
+    }
+    .promise-inner { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; }
+    .promise-inner .section-tag {
+      font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--peach); margin-bottom: 1.4rem;
+    }
+    .promise-inner h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 4.5vw, 3.5rem); font-weight: 900;
+      line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 1.5rem;
+    }
+    .promise-inner h2 em { color: var(--gold); font-style: italic; }
+    .promise-inner p {
+      font-size: 1rem; color: var(--gray-lt); line-height: 1.85; margin-bottom: 3rem;
+    }
+    .promise-actions {
+      display: flex; align-items: center; justify-content: center; gap: 2rem; flex-wrap: wrap;
+    }
+    .btn-ghost {
+      font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--gray-lt); display: flex; align-items: center; gap: 0.5rem;
+      transition: color 0.2s;
+    }
+    .btn-ghost:hover { color: var(--white); }
+
+    /* ── FOOTER ────────────────────────────────────────────────── */
+    footer {
+      padding: 5rem 6vw 3rem;
+      border-top: 1px solid #1a1a1a;
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 4rem; margin-bottom: 4rem;
+    }
+    .footer-brand .logo {
+      font-family: 'Playfair Display', serif; font-size: 1.6rem;
+      font-weight: 900; letter-spacing: -0.01em; margin-bottom: 1rem;
+    }
+    .footer-brand .logo em { color: var(--gold); font-style: italic; }
+    .footer-brand p { font-size: 0.85rem; color: var(--gray); line-height: 1.8; max-width: 300px; margin-bottom: 1.5rem; }
+    .footer-social { display: flex; gap: 1rem; }
+    .social-link {
+      width: 36px; height: 36px; border: 1px solid #2a2a2a;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; color: var(--gray); text-transform: uppercase; letter-spacing: 0.05em;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .social-link:hover { border-color: var(--gold); color: var(--gold); }
+    .footer-col h4 { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray); margin-bottom: 1.4rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+    .footer-col ul a { font-size: 0.88rem; color: var(--gray-lt); transition: color 0.2s; }
+    .footer-col ul a:hover { color: var(--gold); }
+    .footer-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 2rem; border-top: 1px solid #1a1a1a;
+    }
+    .footer-bottom p { font-size: 0.75rem; color: var(--gray); }
+    .footer-tagline { font-family: 'Playfair Display', serif; font-size: 0.85rem; font-style: italic; color: var(--gold); }
+
+    /* ── WHATSAPP FLOAT ────────────────────────────────────────── */
+    .wa-float {
+      position: fixed; bottom: 2.5rem; right: 2.5rem; z-index: 90;
+      width: 52px; height: 52px; background: #25D366;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 24px rgba(37,211,102,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .wa-float:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 12px 32px rgba(37,211,102,0.4); }
+    .wa-float svg { width: 26px; height: 26px; }
+
+    /* ── REVEAL ────────────────────────────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo); }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-left { opacity: 0; transform: translateX(-30px); transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo); }
+    .reveal-left.visible { opacity: 1; transform: none; }
+    .reveal-right { opacity: 0; transform: translateX(30px); transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo); }
+    .reveal-right.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 960px) {
+      #origin, .founder-inner { grid-template-columns: 1fr; gap: 4rem; }
+      .origin-left { display: none; }
+      .values-grid { grid-template-columns: 1fr 1fr; }
+      .values-header { grid-template-columns: 1fr; gap: 2rem; }
+      .footer-top { grid-template-columns: 1fr; gap: 3rem; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+    }
+    @media (max-width: 600px) {
+      .values-grid { grid-template-columns: 1fr; }
+      .promise-actions { flex-direction: column; gap: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WHATSAPP FLOAT -->
+  <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20place%20an%20order." class="wa-float" target="_blank" rel="noopener" aria-label="Order on WhatsApp">
+    <svg viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="index.html" class="nav-logo">Drip <em>n</em> Dine</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="how-to-order.html">How to Order</a></li>
+      <li><a href="our-story.html" class="active">Our Story</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20place%20an%20order." class="nav-cta" target="_blank" rel="noopener">Order Now</a>
+    <div class="nav-hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section id="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-grid"></div>
+    <div class="hero-deco" aria-hidden="true">✦</div>
+    <div class="page-hero-inner">
+      <p class="page-eyebrow">The Story Behind the Brand</p>
+      <h1>
+        <div class="line"><span>We didn't</span></div>
+        <div class="line"><span>follow a <em>recipe.</em></span></div>
+      </h1>
+      <p>Drip n Dine was born out of a simple conviction — that great food should feel like a whole personality. Here's where it all started.</p>
+    </div>
+  </section>
+
+  <!-- MARQUEE STRIP -->
+  <div class="brand-strip" aria-hidden="true">
+    <div class="strip-track">
+      <div class="strip-item">Bold Flavors <span>✦</span></div>
+      <div class="strip-item">Main Character Energy <span>✦</span></div>
+      <div class="strip-item">Lagos Made <span>✦</span></div>
+      <div class="strip-item">Drip n Dine <span>✦</span></div>
+      <div class="strip-item">Crafted With Intent <span>✦</span></div>
+      <div class="strip-item">No Basic Flavors <span>✦</span></div>
+      <div class="strip-item">Bold Flavors <span>✦</span></div>
+      <div class="strip-item">Main Character Energy <span>✦</span></div>
+      <div class="strip-item">Lagos Made <span>✦</span></div>
+      <div class="strip-item">Drip n Dine <span>✦</span></div>
+      <div class="strip-item">Crafted With Intent <span>✦</span></div>
+      <div class="strip-item">No Basic Flavors <span>✦</span></div>
+    </div>
+  </div>
+
+  <!-- ORIGIN STORY -->
+  <section id="origin">
+    <div class="origin-left reveal-left">
+      <div class="origin-visual">
+        <div class="origin-visual-inner">
+          <div class="origin-visual-text">DnD</div>
+        </div>
+      </div>
+      <div class="origin-label">
+        <div class="ol-num">EST. 2026</div>
+        <div class="ol-text">Born in Lagos</div>
+      </div>
+      <div class="origin-vert">Born in Lagos</div>
+    </div>
+    <div class="origin-right reveal-right">
+      <p class="section-tag">The Origin</p>
+      <h2>It started with <em>hunger</em> — and not just for food.</h2>
+      <p>Drip n Dine was built by people who believed the Lagos food scene deserved something different. Not another spot doing the same thing. A place with a real identity — food that hits, a name you remember, and a vibe that makes you feel like the main character every single time you order.</p>
+      <p>We started with a simple question: what if the food was as bold as the people eating it? The answer is what you're looking at right now. A menu built from scratch, combining the familiarity of suya with global street food formats like Cheesesteak and Breadwarma, tied together with Boba Tea and Milkshakes that bring it all home.</p>
+      <p>Every item on this menu was deliberate. Nothing made the cut by accident.</p>
+      <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20place%20an%20order." class="btn-primary" target="_blank" rel="noopener">
+        Try the Menu
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section id="values">
+    <div class="values-header">
+      <div class="reveal">
+        <p class="section-tag">What We Stand For</p>
+        <h2>The things that make us <em>different.</em></h2>
+      </div>
+      <p class="reveal reveal-delay-1">We're not just a food brand. We're a standard. Everything we do — every combo, every cup, every order — is filtered through these three things.</p>
+    </div>
+    <div class="values-grid">
+      <div class="value-card reveal">
+        <div class="value-num">01</div>
+        <div class="value-icon">🔥</div>
+        <div class="value-title">Bold by Design</div>
+        <p class="value-body">Every item on our menu was intentionally built to stand out. We don't do watered-down, safe, or forgettable. If it doesn't hit, it doesn't make the menu.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-1">
+        <div class="value-num">02</div>
+        <div class="value-icon">🤝</div>
+        <div class="value-title">Built for the Culture</div>
+        <p class="value-body">We're from Lagos. We know the energy, the pace, and what people here actually want. Our food is global in format, but deeply local in soul — suya-spiced, Lagos-approved.</p>
+      </div>
+      <div class="value-card reveal reveal-delay-2">
+        <div class="value-num">03</div>
+        <div class="value-icon">⚡</div>
+        <div class="value-title">No Compromises</div>
+        <p class="value-body">Quality is non-negotiable. From the ingredients we use to the way we package and deliver — we hold the same standard whether it's your first order or your fiftieth.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOUNDERS -->
+  <section id="founder">
+    <div class="founder-inner">
+      <div class="founder-text reveal-left">
+        <p class="section-tag">The Founders</p>
+        <h2>Two friends. One <em>bold idea.</em></h2>
+        <p>Drip n Dine didn't start in a boardroom — it started between two friends, Anjola and Goodness, who shared the same frustration: Lagos deserved a food brand with real character. Not just good food, but a whole identity you could feel from the first bite.</p>
+
+        <div class="founder-quote">
+          <p>"We weren't trying to build a restaurant. We were trying to build something people talk about — a brand that feels like Lagos at its boldest."</p>
+          <cite>— Anjola & Goodness, Co-Founders</cite>
+        </div>
+
+        <p>Together they built the menu from scratch — fusing the boldness of suya with global street food formats, curating a Boba Tea lineup that actually makes sense, and designing combo deals that keep people coming back. Every decision was deliberate. Every item earned its place.</p>
+        <p>What started as a shared vision between two friends is now a brand that carries their energy in every order.</p>
+      </div>
+      <div class="founder-visual reveal-right">
+        <div class="founder-img-wrap">
+          <div class="founder-img-inner">
+           <img src="founders.jpg" alt="Anjola and Goodness" style="width:100%;height:100%;object-fit:cover;">
+            <div class="founder-placeholder">
+              <div class="founder-placeholder-icon">👥</div>
+              <div class="founder-placeholder-text">Anjola & Goodness<br>photo coming soon</div>
+            </div>
+          </div>
+        </div>
+        <div class="founder-name-tag">
+          <div class="founder-name">Anjola & Goodness</div>
+          <div class="founder-role">Co-Founders</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMISE / CTA -->
+  <section id="promise">
+    <div class="promise-bg"></div>
+    <div class="promise-inner reveal">
+      <p class="section-tag">Our Promise to You</p>
+      <h2>Every order is a <em>main character</em> moment.</h2>
+      <p>We built this brand for people who take their food seriously — and their vibe even more seriously. Every bite should feel like you made the right call. That's the Drip n Dine standard. Every time.</p>
+      <div class="promise-actions">
+        <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20place%20an%20order." class="btn-primary" target="_blank" rel="noopener">
+          Order Now
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="index.html#menu" class="btn-ghost">
+          Browse the Menu
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">Drip <em>n</em> Dine</div>
+        <p>Flavor With Main Character Energy. Bold food for bold people — now ordering via WhatsApp in Lagos.</p>
+        <div class="footer-social">
+          <a href="#" class="social-link" aria-label="Instagram">IG</a>
+          <a href="#" class="social-link" aria-label="TikTok">TK</a>
+          <a href="#" class="social-link" aria-label="Twitter/X">X</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Menu</h4>
+        <ul>
+          <li><a href="index.html#menu">Combo Deals</a></li>
+          <li><a href="index.html#menu">Breadwarma</a></li>
+          <li><a href="index.html#menu">Cheesesteak</a></li>
+          <li><a href="index.html#menu">Boba Tea</a></li>
+          <li><a href="index.html#menu">Milkshakes</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="our-story.html">Our Story</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="https://wa.me/2347053522778" target="_blank" rel="noopener">Order on WhatsApp</a></li>
+          <li><a href="tel:09064273679">Call Us: 09064273679</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Drip n Dine. All rights reserved. Built by <a href="#" style="color:var(--gold);transition:opacity 0.2s;" onmouseover="this.style.opacity=0.7" onmouseout="this.style.opacity=1">Prexoria</a></p>
+      <span class="footer-tagline">Flavor With Main Character Energy</span>
+    </div>
+  </footer>
+
+  <script>
+
+    // Nav scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    revealEls.forEach(el => obs.observe(el));
+
+    // Hamburger
+    document.getElementById('hamburger').addEventListener('click', () => {
+      const links = document.querySelector('.nav-links');
+      if (links) {
+        const open = links.style.display === 'flex';
+        links.style.display = open ? 'none' : 'flex';
+        if (!open) {
+          Object.assign(links.style, { flexDirection: 'column', position: 'absolute', top: '100%', left: '0', right: '0', background: '#141414', padding: '1.5rem 6vw', borderTop: '1px solid #1e1e1e' });
+        }
+      }
+    });
+  </script>
+</body>
+</html>
