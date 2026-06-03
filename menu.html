@@ -30,19 +30,18 @@
       line-height: 1.6;
       overflow-x: hidden;
     }
-
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; border: none; background: none; font: inherit; }
 
-    /* ── NAV ─────────────────────────────────────────────────── */
+    /* ══ NAV ══════════════════════════════════════════════════ */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
       padding: 1.5rem 4vw;
       display: flex; align-items: center; justify-content: space-between;
       transition: background 0.4s ease, padding 0.4s ease;
     }
-    nav.scrolled { background: rgba(12,12,12,0.95); backdrop-filter: blur(10px); padding: 1rem 4vw; border-bottom: 1px solid #1e1e1e; }
-    .nav-logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.35rem; }
+    nav.scrolled { background: rgba(12,12,12,0.97); backdrop-filter: blur(10px); padding: 1rem 4vw; border-bottom: 1px solid #1e1e1e; }
+    .nav-logo { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.35rem; z-index: 201; position: relative; }
     .nav-logo em { color: var(--gold); font-style: italic; }
     .nav-links { display: flex; gap: 2.5rem; list-style: none; }
     .nav-links a { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-lt); transition: color 0.2s; position: relative; }
@@ -52,12 +51,50 @@
     .nav-links a.active { color: var(--gold); }
     .nav-cta { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--black); background: var(--gold); padding: 0.6rem 1.4rem; transition: background 0.25s, transform 0.2s; }
     .nav-cta:hover { background: var(--gold-lt); transform: translateY(-1px); }
-    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
-    .nav-hamburger span { display: block; width: 22px; height: 1.5px; background: var(--white); }
 
-    /* ── PAGE HERO ───────────────────────────────────────────── */
+    /* Hamburger */
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; z-index: 201; position: relative; padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block; width: 22px; height: 1.5px; background: var(--white);
+      transition: transform 0.3s var(--ease-out-expo), opacity 0.3s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* Mobile full-screen drawer */
+    .mobile-menu {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(12,12,12,0.98); backdrop-filter: blur(16px);
+      z-index: 199;
+      flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s var(--ease-out-expo);
+    }
+    .mobile-menu.open { display: flex; opacity: 1; pointer-events: all; }
+    .mobile-menu a {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 7vw, 2.6rem); font-weight: 700;
+      color: var(--gray-lt); padding: 0.6rem 2rem;
+      transition: color 0.2s; text-align: center; width: 100%;
+    }
+    .mobile-menu a:hover, .mobile-menu a.active { color: var(--gold); }
+    .mobile-menu-cta {
+      margin-top: 2rem;
+      background: var(--gold) !important; color: var(--black) !important;
+      font-family: 'DM Sans', sans-serif !important;
+      font-size: 0.85rem !important; font-weight: 500 !important;
+      letter-spacing: 0.1em !important; padding: 0.9rem 2.4rem !important;
+      width: auto !important;
+    }
+
+    /* ══ PAGE HERO — Redesigned ═══════════════════════════════ */
     #page-hero {
-      padding: 16vh 6vw 7vh;
+      padding: 14vh 6vw 0;
       position: relative; overflow: hidden;
       border-bottom: 1px solid #1a1a1a;
     }
@@ -69,7 +106,8 @@
     }
     .hero-grid {
       position: absolute; inset: 0;
-      background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
       background-size: 60px 60px;
     }
     .hero-deco {
@@ -78,112 +116,116 @@
       color: rgba(255,255,255,0.018); line-height: 1; user-select: none; pointer-events: none;
     }
     .hero-inner { position: relative; z-index: 2; }
+
+    /* ── Hero top: headline + stat pills side by side ── */
     .hero-top {
-      display: flex; align-items: flex-end; justify-content: space-between;
-      gap: 2rem; flex-wrap: wrap;
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 4rem; align-items: center;
+      padding-bottom: 3.5rem;
     }
     .hero-left .eyebrow {
       font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--peach);
       margin-bottom: 1.4rem; display: flex; align-items: center; gap: 0.8rem;
-      opacity: 0; transform: translateY(16px); animation: revUp 0.7s var(--ease-out-expo) 0.1s forwards;
+      opacity: 0; transform: translateY(16px);
+      animation: revUp 0.7s var(--ease-out-expo) 0.1s forwards;
     }
     .hero-left .eyebrow::before { content: ''; display: inline-block; width: 28px; height: 1px; background: var(--peach); }
     .hero-left h1 {
-      font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6.5vw, 5.5rem);
-      font-weight: 900; line-height: 1.0; letter-spacing: -0.02em;
+      font-family: 'Playfair Display', serif; font-size: clamp(3.2rem, 7vw, 6rem);
+      font-weight: 900; line-height: 1.0; letter-spacing: -0.02em; margin-bottom: 1.4rem;
     }
     .hero-left h1 .line { display: block; overflow: hidden; }
     .hero-left h1 .line span { display: block; opacity: 0; transform: translateY(100%); }
     .hero-left h1 .line:nth-child(1) span { animation: revUp 0.85s var(--ease-out-expo) 0.2s forwards; }
     .hero-left h1 .line:nth-child(2) span { animation: revUp 0.85s var(--ease-out-expo) 0.35s forwards; }
     .hero-left h1 em { color: var(--gold); font-style: italic; }
-
-    /* Category count pills */
-    .hero-counts {
-      display: flex; flex-direction: column; gap: 0.6rem; align-items: flex-end;
-      opacity: 0; animation: fadeIn 0.6s ease 0.4s forwards;
-    }
-    .count-pill {
-      display: flex; align-items: center; gap: 1rem;
-      border: 1px solid #2a2a2a; padding: 0.6rem 1.2rem;
-    }
-    .count-pill .cp-num {
-      font-family: 'DM Mono', monospace; font-size: 1rem; color: var(--gold);
-    }
-    .count-pill .cp-label {
-      font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray);
-    }
-
-    /* Hero bottom meta row */
-    .hero-meta {
-      display: flex; align-items: center; gap: 3rem;
-      margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #1e1e1e;
-      opacity: 0; animation: fadeIn 0.6s ease 0.7s forwards; flex-wrap: wrap;
-    }
-    .meta-item { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray); }
-    .meta-item strong { display: block; font-size: 1rem; color: var(--white); letter-spacing: 0; text-transform: none; font-weight: 500; margin-bottom: 0.2rem; }
-    .meta-divider { width: 1px; height: 32px; background: #2a2a2a; }
-
-    @keyframes revUp { to { opacity: 1; transform: none; } }
-
-    /* Hero sub text & CTA row */
-    .hero-sub {
-      font-size: 0.95rem; color: var(--gray-lt); line-height: 1.8;
-      max-width: 480px; margin-top: 1.4rem; margin-bottom: 1.8rem;
-      opacity: 0; animation: fadeIn 0.7s ease 0.5s forwards;
+    .hero-left .hero-sub {
+      font-size: 1rem; color: var(--gray-lt); line-height: 1.85;
+      max-width: 500px; margin-bottom: 2rem;
+      opacity: 0; transform: translateY(16px);
+      animation: revUp 0.7s var(--ease-out-expo) 0.45s forwards;
     }
     .hero-cta-row {
       display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-      opacity: 0; animation: fadeIn 0.7s ease 0.6s forwards;
+      opacity: 0; animation: revUp 0.7s var(--ease-out-expo) 0.55s forwards;
     }
     .hero-wa-btn {
       display: inline-flex; align-items: center; gap: 0.55rem;
       background: #25D366; color: var(--white);
-      font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em;
-      padding: 0.75rem 1.5rem;
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.08em;
+      padding: 0.8rem 1.6rem;
       transition: background 0.2s, transform 0.2s;
     }
     .hero-wa-btn:hover { background: #1ebe5c; transform: translateY(-2px); }
     .hero-call-btn {
       display: inline-flex; align-items: center; gap: 0.5rem;
       border: 1px solid #3a3a3a; color: var(--gray-lt);
-      font-size: 0.78rem; letter-spacing: 0.08em;
-      padding: 0.75rem 1.5rem;
+      font-size: 0.8rem; letter-spacing: 0.08em;
+      padding: 0.8rem 1.6rem;
       transition: border-color 0.2s, color 0.2s;
     }
     .hero-call-btn:hover { border-color: var(--gold); color: var(--gold); }
 
-    /* Featured highlights strip */
-    .hero-highlights {
-      display: flex; gap: 1px;
+    /* Stat pills — right side */
+    .hero-stats {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
       background: #1a1a1a;
-      margin-top: 3rem;
-      opacity: 0; animation: fadeIn 0.7s ease 0.7s forwards;
+      opacity: 0; transform: translateX(20px);
+      animation: revUp 0.7s var(--ease-out-expo) 0.4s forwards;
+      flex-shrink: 0;
+    }
+    .stat-box {
+      background: var(--offblack); padding: 1.8rem 2rem;
+      display: flex; flex-direction: column; gap: 0.4rem;
+      transition: background 0.2s;
+    }
+    .stat-box:hover { background: #181818; }
+    .stat-num {
+      font-family: 'Playfair Display', serif; font-size: 2.8rem;
+      font-weight: 900; color: var(--gold); line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .stat-label {
+      font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--gray);
+    }
+    .stat-box.accent { background: #111; }
+    .stat-box.accent .stat-num { color: var(--peach); }
+
+    /* ── Highlights strip ── */
+    .hero-highlights {
+      display: flex; gap: 1px; background: #1a1a1a;
       overflow-x: auto; scrollbar-width: none;
+      opacity: 0; animation: revUp 0.6s var(--ease-out-expo) 0.65s forwards;
     }
     .hero-highlights::-webkit-scrollbar { display: none; }
     .highlight-card {
       background: var(--offblack); padding: 1.2rem 1.8rem;
-      flex: 1; min-width: 160px;
+      flex: 1; min-width: 150px;
       display: flex; flex-direction: column; gap: 0.3rem;
-      transition: background 0.2s; cursor: default;
       border-bottom: 2px solid transparent;
       transition: border-color 0.25s, background 0.2s;
     }
     .highlight-card:hover { background: #181818; border-bottom-color: var(--gold); }
-    .hl-badge {
-      font-size: 0.68rem; letter-spacing: 0.08em; color: var(--gray);
-      margin-bottom: 0.2rem;
-    }
-    .hl-name {
-      font-weight: 500; font-size: 0.9rem; color: var(--white); line-height: 1.2;
-    }
-    .hl-cat {
-      font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--gold);
-    }
+    .hl-badge { font-size: 0.65rem; letter-spacing: 0.06em; color: var(--gray); margin-bottom: 0.15rem; }
+    .hl-name { font-weight: 500; font-size: 0.88rem; color: var(--white); line-height: 1.2; }
+    .hl-cat { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
 
+    /* ── Hero meta row ── */
+    .hero-meta {
+      display: flex; align-items: center; gap: 3rem;
+      padding: 1.4rem 0; border-top: 1px solid #1e1e1e;
+      opacity: 0; animation: revUp 0.6s var(--ease-out-expo) 0.75s forwards;
+      flex-wrap: wrap; overflow-x: auto; scrollbar-width: none;
+    }
+    .hero-meta::-webkit-scrollbar { display: none; }
+    .meta-item { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray); white-space: nowrap; }
+    .meta-item strong { display: block; font-size: 0.9rem; color: var(--white); letter-spacing: 0; text-transform: none; font-weight: 500; margin-bottom: 0.15rem; }
+    .meta-divider { width: 1px; height: 28px; background: #2a2a2a; flex-shrink: 0; }
 
+    @keyframes revUp { to { opacity: 1; transform: none; } }
+
+    /* ══ STICKY CATEGORY NAV ══════════════════════════════════ */
     #cat-nav {
       position: sticky; top: 64px; z-index: 80;
       background: rgba(12,12,12,0.97); backdrop-filter: blur(12px);
@@ -193,8 +235,7 @@
     #cat-nav::-webkit-scrollbar { display: none; }
     .cat-nav-inner {
       display: flex; align-items: stretch;
-      padding: 0 6vw; gap: 0;
-      min-width: max-content;
+      padding: 0 6vw; gap: 0; min-width: max-content;
     }
     .cat-btn {
       display: flex; align-items: center; gap: 0.6rem;
@@ -202,22 +243,20 @@
       font-size: 0.76rem; letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--gray); white-space: nowrap;
       border-bottom: 2px solid transparent;
-      transition: color 0.2s, border-color 0.2s;
-      flex-shrink: 0;
+      transition: color 0.2s, border-color 0.2s; flex-shrink: 0;
     }
     .cat-btn .cat-icon { font-size: 1rem; }
     .cat-btn .cat-count {
       font-family: 'DM Mono', monospace; font-size: 0.6rem;
       color: var(--gold); background: rgba(198,151,63,0.12);
-      padding: 0.15rem 0.4rem; border-radius: 2px;
+      padding: 0.15rem 0.4rem;
     }
     .cat-btn.active { color: var(--white); border-bottom-color: var(--gold); }
     .cat-btn:hover:not(.active) { color: var(--gray-lt); }
 
-    /* ── MAIN CONTENT ────────────────────────────────────────── */
+    /* ══ MAIN CONTENT ═════════════════════════════════════════ */
     main { padding: 0 6vw 8rem; }
 
-    /* ── CATEGORY SECTION ────────────────────────────────────── */
     .cat-section { padding-top: 6rem; }
     .cat-section:first-child { padding-top: 5rem; }
 
@@ -226,52 +265,24 @@
       margin-bottom: 2.5rem; padding-bottom: 1.5rem;
       border-bottom: 1px solid #1a1a1a; gap: 2rem; flex-wrap: wrap;
     }
-    .cat-header-left .cat-tag {
-      font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
-      color: var(--peach); margin-bottom: 0.7rem;
-    }
-    .cat-header-left h2 {
-      font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.4rem);
-      font-weight: 900; letter-spacing: -0.02em; line-height: 1.1;
-    }
+    .cat-header-left .cat-tag { font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--peach); margin-bottom: 0.7rem; }
+    .cat-header-left h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; }
     .cat-header-left h2 em { color: var(--gold); font-style: italic; }
-    .cat-header-right {
-      font-size: 0.78rem; color: var(--gray); max-width: 280px;
-      line-height: 1.7; text-align: right;
-    }
+    .cat-header-right { font-size: 0.78rem; color: var(--gray); max-width: 280px; line-height: 1.7; text-align: right; }
 
-    /* ── STANDARD MENU GRID ──────────────────────────────────── */
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1px; background: #181818;
-    }
+    /* Menu grids */
+    .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1px; background: #181818; }
     .menu-card {
-      background: var(--offblack);
-      padding: 2.2rem 2rem;
-      display: flex; flex-direction: column; gap: 0;
-      position: relative; overflow: hidden;
-      transition: background 0.2s;
+      background: var(--offblack); padding: 2.2rem 2rem;
+      display: flex; flex-direction: column;
+      position: relative; overflow: hidden; transition: background 0.2s;
     }
-    .menu-card::after {
-      content: '';
-      position: absolute; bottom: 0; left: 0;
-      width: 0; height: 2px;
-      background: linear-gradient(90deg, var(--peach), var(--gold));
-      transition: width 0.4s var(--ease-out-expo);
-    }
+    .menu-card::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: linear-gradient(90deg, var(--peach), var(--gold)); transition: width 0.4s var(--ease-out-expo); }
     .menu-card:hover { background: #181818; }
     .menu-card:hover::after { width: 100%; }
-
     .card-emoji { font-size: 2.2rem; margin-bottom: 1.4rem; line-height: 1; }
-    .card-name {
-      font-weight: 500; font-size: 1rem; color: var(--white);
-      margin-bottom: 0.4rem; line-height: 1.3;
-    }
-    .card-sub {
-      font-size: 0.72rem; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--gray); margin-bottom: 1.8rem;
-    }
+    .card-name { font-weight: 500; font-size: 1rem; color: var(--white); margin-bottom: 0.4rem; line-height: 1.3; }
+    .card-sub { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray); margin-bottom: 1.8rem; }
     .card-order {
       margin-top: auto;
       display: inline-flex; align-items: center; gap: 0.5rem;
@@ -281,138 +292,55 @@
     }
     .menu-card:hover .card-order { gap: 0.8rem; color: var(--gold-lt); }
 
-    /* ── COMBO GRID ──────────────────────────────────────────── */
-    .combo-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1px; background: #181818;
-    }
+    /* Combo grid */
+    .combo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1px; background: #181818; }
     .combo-card {
-      background: var(--offblack);
-      padding: 2.5rem 2.2rem;
+      background: var(--offblack); padding: 2.5rem 2.2rem;
       display: flex; flex-direction: column;
-      position: relative; overflow: hidden;
-      transition: background 0.2s;
+      position: relative; overflow: hidden; transition: background 0.2s;
     }
-    .combo-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0;
-      width: 3px; height: 0;
-      background: linear-gradient(180deg, var(--gold), var(--peach));
-      transition: height 0.4s var(--ease-out-expo);
-    }
+    .combo-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0; background: linear-gradient(180deg, var(--gold), var(--peach)); transition: height 0.4s var(--ease-out-expo); }
     .combo-card:hover { background: #181818; }
     .combo-card:hover::before { height: 100%; }
-
-    /* Featured combo card */
-    .combo-card.featured {
-      background: #111;
-      border: 1px solid #2a2a2a;
-    }
-    .combo-card.featured::before {
-      background: linear-gradient(180deg, var(--peach), var(--gold));
-    }
-
-    .combo-badge {
-      display: inline-block;
-      font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
-      background: var(--gold); color: var(--black);
-      padding: 0.22rem 0.6rem; font-weight: 500;
-      align-self: flex-start; margin-bottom: 1.2rem;
-    }
+    .combo-card.featured { background: #111; border: 1px solid #2a2a2a; }
+    .combo-badge { display: inline-block; font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; background: var(--gold); color: var(--black); padding: 0.22rem 0.6rem; font-weight: 500; align-self: flex-start; margin-bottom: 1.2rem; }
     .combo-badge.hot { background: var(--peach); }
     .combo-badge.big { background: #fff; }
-
-    .combo-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.4rem; font-weight: 700; line-height: 1.2;
-      color: var(--white); margin-bottom: 0.8rem;
-    }
-    .combo-includes {
-      font-size: 0.83rem; color: var(--gray); line-height: 1.7;
-      margin-bottom: 1.6rem; flex: 1;
-    }
-    .combo-includes span {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-    }
-    .combo-includes span::before {
-      content: '—'; color: var(--gold); font-size: 0.7rem;
-    }
-    .combo-order {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--peach); padding-top: 1.2rem; border-top: 1px solid #242424;
-      transition: gap 0.2s;
-    }
+    .combo-name { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; line-height: 1.2; color: var(--white); margin-bottom: 0.8rem; }
+    .combo-includes { font-size: 0.83rem; color: var(--gray); line-height: 1.7; margin-bottom: 1.6rem; flex: 1; }
+    .combo-includes span { display: inline-flex; align-items: center; gap: 0.4rem; }
+    .combo-includes span::before { content: '—'; color: var(--gold); font-size: 0.7rem; }
+    .combo-order { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--peach); padding-top: 1.2rem; border-top: 1px solid #242424; transition: gap 0.2s; }
     .combo-card:hover .combo-order { gap: 0.8rem; }
 
-    /* ── BOBA GRID (wider cards, colour-coded) ───────────────── */
-    .boba-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1px; background: #181818;
-    }
-    .boba-card {
-      background: var(--offblack);
-      padding: 2.2rem 1.8rem;
-      display: flex; flex-direction: column;
-      position: relative; overflow: hidden;
-      transition: background 0.2s;
-    }
+    /* Boba grid */
+    .boba-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1px; background: #181818; }
+    .boba-card { background: var(--offblack); padding: 2.2rem 1.8rem; display: flex; flex-direction: column; position: relative; overflow: hidden; transition: background 0.2s; }
     .boba-card:hover { background: #181818; }
-    .boba-dot {
-      width: 10px; height: 10px; border-radius: 50%;
-      margin-bottom: 1.4rem; flex-shrink: 0;
-    }
+    .boba-dot { width: 10px; height: 10px; border-radius: 50%; margin-bottom: 1.4rem; flex-shrink: 0; }
     .boba-card .card-order { color: var(--peach); }
     .boba-card:hover .card-order { color: var(--peach-lt); }
 
-    /* ── ORDER ALL BANNER ────────────────────────────────────── */
+    /* Order banner */
     .order-banner {
-      margin-top: 5rem;
-      padding: 4rem 4vw;
-      background: var(--offblack);
-      border: 1px solid #2a2a2a;
+      margin-top: 5rem; padding: 4rem 4vw;
+      background: var(--offblack); border: 1px solid #2a2a2a;
       display: flex; align-items: center; justify-content: space-between;
-      gap: 2rem; flex-wrap: wrap;
-      position: relative; overflow: hidden;
+      gap: 2rem; flex-wrap: wrap; position: relative; overflow: hidden;
     }
-    .order-banner::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse 50% 80% at 100% 50%, rgba(198,151,63,0.07) 0%, transparent 60%);
-      pointer-events: none;
-    }
+    .order-banner::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 50% 80% at 100% 50%, rgba(198,151,63,0.07) 0%, transparent 60%); pointer-events: none; }
     .banner-left { position: relative; z-index: 1; }
-    .banner-left .banner-tag {
-      font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
-      color: var(--peach); margin-bottom: 0.7rem;
-    }
-    .banner-left h3 {
-      font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3vw, 2.2rem);
-      font-weight: 900; letter-spacing: -0.02em; line-height: 1.15;
-    }
+    .banner-left .banner-tag { font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--peach); margin-bottom: 0.7rem; }
+    .banner-left h3 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1.15; }
     .banner-left h3 em { color: var(--gold); font-style: italic; }
     .banner-left p { font-size: 0.88rem; color: var(--gray); margin-top: 0.8rem; line-height: 1.7; }
     .banner-right { display: flex; gap: 1rem; flex-wrap: wrap; position: relative; z-index: 1; }
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 0.6rem;
-      background: var(--gold); color: var(--black);
-      font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 1rem 2.2rem;
-      transition: background 0.25s, transform 0.2s, box-shadow 0.2s;
-    }
+    .btn-primary { display: inline-flex; align-items: center; gap: 0.6rem; background: var(--gold); color: var(--black); font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 1rem 2.2rem; transition: background 0.25s, transform 0.2s, box-shadow 0.2s; }
     .btn-primary:hover { background: var(--gold-lt); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(198,151,63,0.25); }
-    .btn-outline {
-      display: inline-flex; align-items: center; gap: 0.6rem;
-      border: 1px solid #3a3a3a; color: var(--gray-lt);
-      font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 1rem 2.2rem;
-      transition: border-color 0.2s, color 0.2s;
-    }
+    .btn-outline { display: inline-flex; align-items: center; gap: 0.6rem; border: 1px solid #3a3a3a; color: var(--gray-lt); font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 1rem 2.2rem; transition: border-color 0.2s, color 0.2s; }
     .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
 
-    /* ── REVEAL ──────────────────────────────────────────────── */
+    /* ══ REVEAL ═══════════════════════════════════════════════ */
     .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo); }
     .reveal.visible { opacity: 1; transform: none; }
     .reveal-delay-1 { transition-delay: 0.08s; }
@@ -420,7 +348,7 @@
     .reveal-delay-3 { transition-delay: 0.24s; }
     .reveal-delay-4 { transition-delay: 0.32s; }
 
-    /* ── FOOTER ──────────────────────────────────────────────── */
+    /* ══ FOOTER ═══════════════════════════════════════════════ */
     footer { padding: 5rem 6vw 3rem; border-top: 1px solid #1a1a1a; }
     .footer-top { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 4rem; margin-bottom: 4rem; }
     .footer-brand .logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 900; margin-bottom: 1rem; }
@@ -433,32 +361,48 @@
     .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
     .footer-col ul a { font-size: 0.88rem; color: var(--gray-lt); transition: color 0.2s; }
     .footer-col ul a:hover { color: var(--gold); }
-    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 2rem; border-top: 1px solid #1a1a1a; }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 2rem; border-top: 1px solid #1a1a1a; flex-wrap: wrap; gap: 1rem; }
     .footer-bottom p { font-size: 0.75rem; color: var(--gray); }
     .footer-tagline { font-family: 'Playfair Display', serif; font-size: 0.85rem; font-style: italic; color: var(--gold); }
 
-    /* ── WA FLOAT ────────────────────────────────────────────── */
+    /* ══ WA FLOAT ═════════════════════════════════════════════ */
     .wa-float { position: fixed; bottom: 2.5rem; right: 2.5rem; z-index: 90; width: 52px; height: 52px; background: #25D366; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 24px rgba(37,211,102,0.3); transition: transform 0.2s, box-shadow 0.2s; }
     .wa-float:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 12px 32px rgba(37,211,102,0.4); }
     .wa-float svg { width: 26px; height: 26px; }
 
-    /* ── RESPONSIVE ──────────────────────────────────────────── */
-    @media (max-width: 900px) {
-      .hero-top { flex-direction: column; align-items: flex-start; }
-      .hero-counts { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
-      .hero-meta { gap: 1.5rem; }
-      .meta-divider { display: none; }
-      .cat-header { flex-direction: column; align-items: flex-start; }
-      .cat-header-right { text-align: left; }
-      .footer-top { grid-template-columns: 1fr; gap: 3rem; }
+    /* ══════════════════════════════════════════════════════════
+       RESPONSIVE — Tablet (≤960px)
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 960px) {
       .nav-links, .nav-cta { display: none; }
       .nav-hamburger { display: flex; }
+      .hero-top { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-stats { grid-template-columns: repeat(4, 1fr); }
+      .cat-header { flex-direction: column; align-items: flex-start; }
+      .cat-header-right { text-align: left; max-width: 100%; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 3rem; }
       .order-banner { flex-direction: column; }
+      .hero-meta { gap: 1.5rem; }
+      .meta-divider { display: none; }
     }
-    @media (max-width: 600px) {
+
+    /* ══════════════════════════════════════════════════════════
+       RESPONSIVE — Mobile (≤640px)
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 640px) {
+      nav { padding: 1.2rem 5vw; }
+      #page-hero { padding: 13vh 5vw 0; }
+      main { padding: 0 5vw 6rem; }
+      .hero-stats { grid-template-columns: 1fr 1fr; }
+      .stat-num { font-size: 2.2rem; }
       .combo-grid, .menu-grid, .boba-grid { grid-template-columns: 1fr; }
       .banner-right { width: 100%; flex-direction: column; }
       .btn-primary, .btn-outline { width: 100%; justify-content: center; }
+      .footer-top { grid-template-columns: 1fr; gap: 2.5rem; }
+      footer { padding: 4rem 5vw 2.5rem; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+      .wa-float { bottom: 1.5rem; right: 1.5rem; width: 46px; height: 46px; }
+      .wa-float svg { width: 22px; height: 22px; }
     }
   </style>
 </head>
@@ -480,8 +424,20 @@
       <li><a href="contact.html">Contact</a></li>
     </ul>
     <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20place%20an%20order." class="nav-cta" target="_blank" rel="noopener">Order Now</a>
-    <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    <div class="nav-hamburger" id="hamburger" aria-label="Toggle menu" role="button" tabindex="0">
+      <span></span><span></span><span></span>
+    </div>
   </nav>
+
+  <!-- MOBILE DRAWER -->
+  <div class="mobile-menu" id="mobileMenu" role="navigation" aria-label="Mobile navigation">
+    <a href="index.html">Home</a>
+    <a href="menu.html" class="active">Menu</a>
+    <a href="how-to-order.html">How to Order</a>
+    <a href="our-story.html">Our Story</a>
+    <a href="contact.html">Contact</a>
+    <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20place%20an%20order." class="mobile-menu-cta" target="_blank" rel="noopener">Order on WhatsApp</a>
+  </div>
 
   <!-- PAGE HERO -->
   <section id="page-hero">
@@ -490,7 +446,7 @@
     <div class="hero-deco" aria-hidden="true">✦</div>
     <div class="hero-inner">
 
-      <!-- Top row: headline + count pills -->
+      <!-- Headline + Stats grid -->
       <div class="hero-top">
         <div class="hero-left">
           <p class="eyebrow">Everything We Serve</p>
@@ -501,24 +457,38 @@
           <p class="hero-sub">Bold food, bold drinks, and combo deals built for people who don't settle. Every item made to order — straight to your WhatsApp.</p>
           <div class="hero-cta-row">
             <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20place%20an%20order." class="hero-wa-btn" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              <svg viewBox="0 0 24 24" fill="white" width="15" height="15"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               Order on WhatsApp
             </a>
             <a href="tel:09064273679" class="hero-call-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
               Call Us
             </a>
           </div>
         </div>
-        <div class="hero-counts">
-          <div class="count-pill"><span class="cp-num">07</span><span class="cp-label">Combo Deals</span></div>
-          <div class="count-pill"><span class="cp-num">07</span><span class="cp-label">Boba Flavors</span></div>
-          <div class="count-pill"><span class="cp-num">05</span><span class="cp-label">Milkshakes</span></div>
-          <div class="count-pill"><span class="cp-num">04</span><span class="cp-label">Mains</span></div>
+
+        <!-- 2x2 stat boxes -->
+        <div class="hero-stats">
+          <div class="stat-box">
+            <div class="stat-num">07</div>
+            <div class="stat-label">Combo Deals</div>
+          </div>
+          <div class="stat-box accent">
+            <div class="stat-num">07</div>
+            <div class="stat-label">Boba Flavors</div>
+          </div>
+          <div class="stat-box accent">
+            <div class="stat-num">05</div>
+            <div class="stat-label">Milkshakes</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">04</div>
+            <div class="stat-label">Mains</div>
+          </div>
         </div>
       </div>
 
-      <!-- Featured highlights strip -->
+      <!-- Highlights strip -->
       <div class="hero-highlights">
         <div class="highlight-card">
           <span class="hl-badge">🔥 Bestseller</span>
@@ -547,7 +517,7 @@
         </div>
       </div>
 
-      <!-- Meta info row -->
+      <!-- Meta info strip -->
       <div class="hero-meta">
         <div class="meta-item"><strong>Order via WhatsApp</strong>Tap any item to order</div>
         <div class="meta-divider"></div>
@@ -557,291 +527,92 @@
         <div class="meta-divider"></div>
         <div class="meta-item"><strong>Lagos</strong>Delivery available</div>
       </div>
-
     </div>
   </section>
 
   <!-- STICKY CATEGORY NAV -->
   <div id="cat-nav" role="navigation" aria-label="Menu categories">
     <div class="cat-nav-inner">
-      <button class="cat-btn active" data-target="combos">
-        <span class="cat-icon">⚡</span> Combo Deals <span class="cat-count">07</span>
-      </button>
-      <button class="cat-btn" data-target="breadwarma">
-        <span class="cat-icon">🥙</span> Breadwarma <span class="cat-count">02</span>
-      </button>
-      <button class="cat-btn" data-target="cheesesteak">
-        <span class="cat-icon">🥩</span> Cheesesteak <span class="cat-count">02</span>
-      </button>
-      <button class="cat-btn" data-target="boba">
-        <span class="cat-icon">🧋</span> Boba Tea <span class="cat-count">07</span>
-      </button>
-      <button class="cat-btn" data-target="drinks">
-        <span class="cat-icon">🍋</span> Drinks <span class="cat-count">03</span>
-      </button>
-      <button class="cat-btn" data-target="milkshake">
-        <span class="cat-icon">🍓</span> Milkshakes <span class="cat-count">05</span>
-      </button>
+      <button class="cat-btn active" data-target="combos"><span class="cat-icon">⚡</span> Combo Deals <span class="cat-count">07</span></button>
+      <button class="cat-btn" data-target="breadwarma"><span class="cat-icon">🥙</span> Breadwarma <span class="cat-count">02</span></button>
+      <button class="cat-btn" data-target="cheesesteak"><span class="cat-icon">🥩</span> Cheesesteak <span class="cat-count">02</span></button>
+      <button class="cat-btn" data-target="boba"><span class="cat-icon">🧋</span> Boba Tea <span class="cat-count">07</span></button>
+      <button class="cat-btn" data-target="drinks"><span class="cat-icon">🍋</span> Drinks <span class="cat-count">03</span></button>
+      <button class="cat-btn" data-target="milkshake"><span class="cat-icon">🍓</span> Milkshakes <span class="cat-count">05</span></button>
     </div>
   </div>
 
   <!-- MAIN MENU CONTENT -->
   <main>
 
-    <!-- ── COMBO DEALS ──────────────────────────────────────── -->
+    <!-- COMBO DEALS -->
     <section class="cat-section" id="combos">
       <div class="cat-header reveal">
-        <div class="cat-header-left">
-          <p class="cat-tag">⚡ Best Value</p>
-          <h2>Combo <em>Deals</em></h2>
-        </div>
+        <div class="cat-header-left"><p class="cat-tag">⚡ Best Value</p><h2>Combo <em>Deals</em></h2></div>
         <p class="cat-header-right">Our combos are built to go hard. Mix and match your favourites — more food, more value, more drip.</p>
       </div>
       <div class="combo-grid">
-        <div class="combo-card reveal">
-          <span class="combo-badge">Classic</span>
-          <div class="combo-name">The Classic Steak Pair</div>
-          <div class="combo-includes">
-            <span>Half Cheesesteak</span><br>
-            <span>Milk Tea Boba</span>
-          </div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20The%20Classic%20Steak%20Pair." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="combo-card reveal reveal-delay-1">
-          <span class="combo-badge hot">Popular</span>
-          <div class="combo-name">Street Fix</div>
-          <div class="combo-includes">
-            <span>Half Breadwarma</span><br>
-            <span>Any Drink or Milkshake of choice</span>
-          </div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Street%20Fix." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="combo-card reveal reveal-delay-2">
-          <span class="combo-badge">Fan Fav</span>
-          <div class="combo-name">Loaded Bite</div>
-          <div class="combo-includes">
-            <span>Full Cheesesteak</span><br>
-            <span>Any Drink or Milkshake of choice</span>
-          </div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Loaded%20Bite." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="combo-card reveal reveal-delay-3">
-          <span class="combo-badge hot">Heavy</span>
-          <div class="combo-name">Big Belle Cravings</div>
-          <div class="combo-includes">
-            <span>Full Breadwarma</span><br>
-            <span>Any Drink or Milkshake of choice</span>
-          </div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Big%20Belle%20Cravings." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="combo-card reveal">
-          <span class="combo-badge">Duo</span>
-          <div class="combo-name">Double Trouble</div>
-          <div class="combo-includes">
-            <span>Half Cheesesteak</span><br>
-            <span>Half Breadwarma</span>
-          </div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Double%20Trouble." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="combo-card featured reveal reveal-delay-1">
-          <span class="combo-badge big">Go Big</span>
-          <div class="combo-name">Monster Package</div>
-          <div class="combo-includes">
-            <span>Half Cheesesteak</span><br>
-            <span>Half Breadwarma</span><br>
-            <span>Any Drink or Milkshake of choice</span>
-          </div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Monster%20Package." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="combo-card featured reveal reveal-delay-2">
-          <span class="combo-badge hot">Ultimate</span>
-          <div class="combo-name">Triple Threat</div>
-          <div class="combo-includes">
-            <span>Full Cheesesteak</span><br>
-            <span>Full Breadwarma</span><br>
-            <span>Any Drink or Milkshake of choice</span>
-          </div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Triple%20Threat." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
+        <div class="combo-card reveal"><span class="combo-badge">Classic</span><div class="combo-name">The Classic Steak Pair</div><div class="combo-includes"><span>Half Cheesesteak</span><br><span>Milk Tea Boba</span></div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20The%20Classic%20Steak%20Pair." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="combo-card reveal reveal-delay-1"><span class="combo-badge hot">Popular</span><div class="combo-name">Street Fix</div><div class="combo-includes"><span>Half Breadwarma</span><br><span>Any Drink or Milkshake of choice</span></div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Street%20Fix." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="combo-card reveal reveal-delay-2"><span class="combo-badge">Fan Fav</span><div class="combo-name">Loaded Bite</div><div class="combo-includes"><span>Full Cheesesteak</span><br><span>Any Drink or Milkshake of choice</span></div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Loaded%20Bite." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="combo-card reveal reveal-delay-3"><span class="combo-badge hot">Heavy</span><div class="combo-name">Big Belle Cravings</div><div class="combo-includes"><span>Full Breadwarma</span><br><span>Any Drink or Milkshake of choice</span></div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Big%20Belle%20Cravings." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="combo-card reveal"><span class="combo-badge">Duo</span><div class="combo-name">Double Trouble</div><div class="combo-includes"><span>Half Cheesesteak</span><br><span>Half Breadwarma</span></div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Double%20Trouble." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="combo-card featured reveal reveal-delay-1"><span class="combo-badge big">Go Big</span><div class="combo-name">Monster Package</div><div class="combo-includes"><span>Half Cheesesteak</span><br><span>Half Breadwarma</span><br><span>Any Drink or Milkshake of choice</span></div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Monster%20Package." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="combo-card featured reveal reveal-delay-2"><span class="combo-badge hot">Ultimate</span><div class="combo-name">Triple Threat</div><div class="combo-includes"><span>Full Cheesesteak</span><br><span>Full Breadwarma</span><br><span>Any Drink or Milkshake of choice</span></div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Triple%20Threat." class="combo-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
       </div>
     </section>
 
-    <!-- ── BREADWARMA ─────────────────────────────────────────── -->
+    <!-- BREADWARMA -->
     <section class="cat-section" id="breadwarma">
-      <div class="cat-header reveal">
-        <div class="cat-header-left">
-          <p class="cat-tag">🥙 Mains</p>
-          <h2><em>Bread</em>warma</h2>
-        </div>
-        <p class="cat-header-right">Street-style breadwarma done right — wrapped tight, loaded with flavour. Pick your protein.</p>
-      </div>
+      <div class="cat-header reveal"><div class="cat-header-left"><p class="cat-tag">🥙 Mains</p><h2><em>Bread</em>warma</h2></div><p class="cat-header-right">Street-style breadwarma done right — wrapped tight, loaded with flavour. Pick your protein.</p></div>
       <div class="menu-grid">
-        <div class="menu-card reveal">
-          <div class="card-emoji">🥙</div>
-          <div class="card-name">Chicken Breadwarma</div>
-          <div class="card-sub">Tender chicken · Breadwarma wrap</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Chicken%20Breadwarma." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="menu-card reveal reveal-delay-1">
-          <div class="card-emoji">🔥</div>
-          <div class="card-name">Suya Breadwarma</div>
-          <div class="card-sub">Suya-spiced beef · Breadwarma wrap</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Suya%20Breadwarma." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
+        <div class="menu-card reveal"><div class="card-emoji">🥙</div><div class="card-name">Chicken Breadwarma</div><div class="card-sub">Tender chicken · Breadwarma wrap</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Chicken%20Breadwarma." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-card reveal reveal-delay-1"><div class="card-emoji">🔥</div><div class="card-name">Suya Breadwarma</div><div class="card-sub">Suya-spiced beef · Breadwarma wrap</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Suya%20Breadwarma." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
       </div>
     </section>
 
-    <!-- ── CHEESESTEAK ────────────────────────────────────────── -->
+    <!-- CHEESESTEAK -->
     <section class="cat-section" id="cheesesteak">
-      <div class="cat-header reveal">
-        <div class="cat-header-left">
-          <p class="cat-tag">🥩 Mains</p>
-          <h2><em>Cheese</em>steak</h2>
-        </div>
-        <p class="cat-header-right">Philly-inspired, Lagos-seasoned. Melted cheese, your choice of protein, packed into every bite.</p>
-      </div>
+      <div class="cat-header reveal"><div class="cat-header-left"><p class="cat-tag">🥩 Mains</p><h2><em>Cheese</em>steak</h2></div><p class="cat-header-right">Philly-inspired, Lagos-seasoned. Melted cheese, your choice of protein, packed into every bite.</p></div>
       <div class="menu-grid">
-        <div class="menu-card reveal">
-          <div class="card-emoji">🥩</div>
-          <div class="card-name">Suya Cheesesteak</div>
-          <div class="card-sub">Suya-spiced beef · Melted cheese · Hoagie roll</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Suya%20Cheesesteak." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="menu-card reveal reveal-delay-1">
-          <div class="card-emoji">🍗</div>
-          <div class="card-name">Chicken Cheesesteak</div>
-          <div class="card-sub">Grilled chicken · Melted cheese · Hoagie roll</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Chicken%20Cheesesteak." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
+        <div class="menu-card reveal"><div class="card-emoji">🥩</div><div class="card-name">Suya Cheesesteak</div><div class="card-sub">Suya-spiced beef · Melted cheese · Hoagie roll</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Suya%20Cheesesteak." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-card reveal reveal-delay-1"><div class="card-emoji">🍗</div><div class="card-name">Chicken Cheesesteak</div><div class="card-sub">Grilled chicken · Melted cheese · Hoagie roll</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Chicken%20Cheesesteak." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
       </div>
     </section>
 
-    <!-- ── BOBA TEA ────────────────────────────────────────────── -->
+    <!-- BOBA TEA -->
     <section class="cat-section" id="boba">
-      <div class="cat-header reveal">
-        <div class="cat-header-left">
-          <p class="cat-tag">🧋 Drinks</p>
-          <h2>Boba <em>Tea</em></h2>
-        </div>
-        <p class="cat-header-right">Seven flavours. All made to sip slowly and enjoy loudly. Pick one, or try them all.</p>
-      </div>
+      <div class="cat-header reveal"><div class="cat-header-left"><p class="cat-tag">🧋 Drinks</p><h2>Boba <em>Tea</em></h2></div><p class="cat-header-right">Seven flavours. All made to sip slowly and enjoy loudly. Pick one, or try them all.</p></div>
       <div class="boba-grid">
-        <div class="boba-card reveal">
-          <div class="boba-dot" style="background:#D4B8A0;"></div>
-          <div class="card-name">Milk Tea Boba</div>
-          <div class="card-sub">Classic · Creamy</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Milk%20Tea%20Boba." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="boba-card reveal reveal-delay-1">
-          <div class="boba-dot" style="background:#5C3D2E;"></div>
-          <div class="card-name">Mocha Boba Tea</div>
-          <div class="card-sub">Chocolate · Rich</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Mocha%20Boba%20Tea." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="boba-card reveal reveal-delay-2">
-          <div class="boba-dot" style="background:#E87D7D;"></div>
-          <div class="card-name">Strawberry Boba Tea</div>
-          <div class="card-sub">Fruity · Sweet</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Strawberry%20Boba%20Tea." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="boba-card reveal reveal-delay-3">
-          <div class="boba-dot" style="background:#C6973F;"></div>
-          <div class="card-name">Iced Latte Boba</div>
-          <div class="card-sub">Coffee · Cool</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Iced%20Latte%20Boba." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="boba-card reveal">
-          <div class="boba-dot" style="background:#9B7FBF;"></div>
-          <div class="card-name">Taro Boba Tea</div>
-          <div class="card-sub">Purple · Earthy · Sweet</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Taro%20Boba%20Tea." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="boba-card reveal reveal-delay-1">
-          <div class="boba-dot" style="background:#5A8A5A;"></div>
-          <div class="card-name">Matcha Boba Tea</div>
-          <div class="card-sub">Green tea · Earthy</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Matcha%20Boba%20Tea." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="boba-card reveal reveal-delay-2">
-          <div class="boba-dot" style="background:#C6973F;"></div>
-          <div class="card-name">Caramel Boba Tea</div>
-          <div class="card-sub">Buttery · Sweet</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Caramel%20Boba%20Tea." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
+        <div class="boba-card reveal"><div class="boba-dot" style="background:#D4B8A0;"></div><div class="card-name">Milk Tea Boba</div><div class="card-sub">Classic · Creamy</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Milk%20Tea%20Boba." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="boba-card reveal reveal-delay-1"><div class="boba-dot" style="background:#5C3D2E;"></div><div class="card-name">Mocha Boba Tea</div><div class="card-sub">Chocolate · Rich</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Mocha%20Boba%20Tea." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="boba-card reveal reveal-delay-2"><div class="boba-dot" style="background:#E87D7D;"></div><div class="card-name">Strawberry Boba Tea</div><div class="card-sub">Fruity · Sweet</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Strawberry%20Boba%20Tea." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="boba-card reveal reveal-delay-3"><div class="boba-dot" style="background:#C6973F;"></div><div class="card-name">Iced Latte Boba</div><div class="card-sub">Coffee · Cool</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Iced%20Latte%20Boba." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="boba-card reveal"><div class="boba-dot" style="background:#9B7FBF;"></div><div class="card-name">Taro Boba Tea</div><div class="card-sub">Purple · Earthy · Sweet</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Taro%20Boba%20Tea." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="boba-card reveal reveal-delay-1"><div class="boba-dot" style="background:#5A8A5A;"></div><div class="card-name">Matcha Boba Tea</div><div class="card-sub">Green tea · Earthy</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Matcha%20Boba%20Tea." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="boba-card reveal reveal-delay-2"><div class="boba-dot" style="background:#C6973F;"></div><div class="card-name">Caramel Boba Tea</div><div class="card-sub">Buttery · Sweet</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Caramel%20Boba%20Tea." class="card-order" target="_blank" rel="noopener">Order <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
       </div>
     </section>
 
-    <!-- ── DRINKS ──────────────────────────────────────────────── -->
+    <!-- DRINKS -->
     <section class="cat-section" id="drinks">
-      <div class="cat-header reveal">
-        <div class="cat-header-left">
-          <p class="cat-tag">🍋 Drinks</p>
-          <h2>Cold <em>Drinks</em></h2>
-        </div>
-        <p class="cat-header-right">Refreshing, iced, and always cold. The perfect companion to any meal.</p>
-      </div>
+      <div class="cat-header reveal"><div class="cat-header-left"><p class="cat-tag">🍋 Drinks</p><h2>Cold <em>Drinks</em></h2></div><p class="cat-header-right">Refreshing, iced, and always cold. The perfect companion to any meal.</p></div>
       <div class="menu-grid">
-        <div class="menu-card reveal">
-          <div class="card-emoji">🍋</div>
-          <div class="card-name">Lemonade</div>
-          <div class="card-sub">Fresh · Citrus · Chilled</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Lemonade." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="menu-card reveal reveal-delay-1">
-          <div class="card-emoji">☕</div>
-          <div class="card-name">Iced Coffee (Americano)</div>
-          <div class="card-sub">Espresso · Iced · Bold</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Iced%20Coffee%20Americano." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="menu-card reveal reveal-delay-2">
-          <div class="card-emoji">🧊</div>
-          <div class="card-name">Iced Latte</div>
-          <div class="card-sub">Espresso · Milk · Iced</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Iced%20Latte." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
+        <div class="menu-card reveal"><div class="card-emoji">🍋</div><div class="card-name">Lemonade</div><div class="card-sub">Fresh · Citrus · Chilled</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Lemonade." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-card reveal reveal-delay-1"><div class="card-emoji">☕</div><div class="card-name">Iced Coffee (Americano)</div><div class="card-sub">Espresso · Iced · Bold</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Iced%20Coffee%20Americano." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-card reveal reveal-delay-2"><div class="card-emoji">🧊</div><div class="card-name">Iced Latte</div><div class="card-sub">Espresso · Milk · Iced</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Iced%20Latte." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
       </div>
     </section>
 
-    <!-- ── MILKSHAKES ─────────────────────────────────────────── -->
+    <!-- MILKSHAKES -->
     <section class="cat-section" id="milkshake">
-      <div class="cat-header reveal">
-        <div class="cat-header-left">
-          <p class="cat-tag">🍓 Shakes</p>
-          <h2>Milk<em>shakes</em></h2>
-        </div>
-        <p class="cat-header-right">Thick, creamy, and dangerously good. Five flavours — each one worth finishing alone.</p>
-      </div>
+      <div class="cat-header reveal"><div class="cat-header-left"><p class="cat-tag">🍓 Shakes</p><h2>Milk<em>shakes</em></h2></div><p class="cat-header-right">Thick, creamy, and dangerously good. Five flavours — each one worth finishing alone.</p></div>
       <div class="menu-grid">
-        <div class="menu-card reveal">
-          <div class="card-emoji">🍓</div>
-          <div class="card-name">Strawberry Milkshake</div>
-          <div class="card-sub">Fresh strawberry · Creamy blend</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Strawberry%20Milkshake." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="menu-card reveal reveal-delay-1">
-          <div class="card-emoji">🍮</div>
-          <div class="card-name">Caramel Vanilla Milkshake</div>
-          <div class="card-sub">Caramel · Vanilla · Smooth</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Caramel%20Vanilla%20Milkshake." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="menu-card reveal reveal-delay-2">
-          <div class="card-emoji">🍫</div>
-          <div class="card-name">Chocolate Milkshake</div>
-          <div class="card-sub">Rich chocolate · Thick blend</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Chocolate%20Milkshake." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="menu-card reveal reveal-delay-3">
-          <div class="card-emoji">🍪</div>
-          <div class="card-name">Oreo Milkshake</div>
-          <div class="card-sub">Crushed Oreo · Vanilla base</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Oreo%20Milkshake." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
-        <div class="menu-card reveal reveal-delay-4">
-          <div class="card-emoji">💜</div>
-          <div class="card-name">Taro Milkshake</div>
-          <div class="card-sub">Purple taro · Creamy · Unique</div>
-          <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Taro%20Milkshake." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        </div>
+        <div class="menu-card reveal"><div class="card-emoji">🍓</div><div class="card-name">Strawberry Milkshake</div><div class="card-sub">Fresh strawberry · Creamy blend</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Strawberry%20Milkshake." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-card reveal reveal-delay-1"><div class="card-emoji">🍮</div><div class="card-name">Caramel Vanilla Milkshake</div><div class="card-sub">Caramel · Vanilla · Smooth</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Caramel%20Vanilla%20Milkshake." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-card reveal reveal-delay-2"><div class="card-emoji">🍫</div><div class="card-name">Chocolate Milkshake</div><div class="card-sub">Rich chocolate · Thick blend</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Chocolate%20Milkshake." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-card reveal reveal-delay-3"><div class="card-emoji">🍪</div><div class="card-name">Oreo Milkshake</div><div class="card-sub">Crushed Oreo · Vanilla base</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Oreo%20Milkshake." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+        <div class="menu-card reveal reveal-delay-4"><div class="card-emoji">💜</div><div class="card-name">Taro Milkshake</div><div class="card-sub">Purple taro · Creamy · Unique</div><a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20order%20Taro%20Milkshake." class="card-order" target="_blank" rel="noopener">Order on WhatsApp <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
       </div>
     </section>
 
@@ -853,14 +624,8 @@
         <p>Hit any Order button above, or reach us directly — we confirm your order and delivery straight on WhatsApp.</p>
       </div>
       <div class="banner-right">
-        <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20place%20an%20order." class="btn-primary" target="_blank" rel="noopener">
-          Order on WhatsApp
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-        <a href="tel:09064273679" class="btn-outline">
-          Call Us
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-        </a>
+        <a href="https://wa.me/2347053522778?text=Hi%20Drip%20n%20Dine!%20I%27d%20like%20to%20place%20an%20order." class="btn-primary" target="_blank" rel="noopener">Order on WhatsApp <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <a href="tel:09064273679" class="btn-outline">Call Us <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></a>
       </div>
     </div>
 
@@ -906,17 +671,28 @@
   </footer>
 
   <script>
-
-    // Nav scroll
+    // ── Nav scroll ──────────────────────────────────────────
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 60);
     }, { passive: true });
 
-    // Sticky cat nav highlight on scroll
-    const sections = document.querySelectorAll('.cat-section');
-    const catBtns  = document.querySelectorAll('.cat-btn');
-    const catNavHeight = document.getElementById('cat-nav').offsetHeight + navbar.offsetHeight;
+    // ── Mobile drawer ───────────────────────────────────────
+    const hamburger  = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let menuOpen = false;
+    function openMenu()  { menuOpen = true;  hamburger.classList.add('open');    mobileMenu.classList.add('open');    document.body.style.overflow = 'hidden'; }
+    function closeMenu() { menuOpen = false; hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); document.body.style.overflow = ''; }
+    hamburger.addEventListener('click', () => menuOpen ? closeMenu() : openMenu());
+    hamburger.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); menuOpen ? closeMenu() : openMenu(); } });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && menuOpen) closeMenu(); });
+
+    // ── Sticky cat nav highlight on scroll ──────────────────
+    const sections   = document.querySelectorAll('.cat-section');
+    const catBtns    = document.querySelectorAll('.cat-btn');
+    const catNavEl   = document.getElementById('cat-nav');
+    const getOffset  = () => navbar.offsetHeight + catNavEl.offsetHeight + 20;
 
     const sectionObs = new IntersectionObserver((entries) => {
       entries.forEach(e => {
@@ -925,43 +701,21 @@
           catBtns.forEach(b => b.classList.toggle('active', b.dataset.target === id));
         }
       });
-    }, { rootMargin: `-${catNavHeight + 20}px 0px -55% 0px` });
+    }, { rootMargin: `-${navbar.offsetHeight + catNavEl.offsetHeight + 20}px 0px -55% 0px` });
     sections.forEach(s => sectionObs.observe(s));
 
-    // Click scroll to section
     catBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         const target = document.getElementById(btn.dataset.target);
-        if (target) {
-          const offset = navbar.offsetHeight + document.getElementById('cat-nav').offsetHeight + 20;
-          window.scrollTo({ top: target.offsetTop - offset, behavior: 'smooth' });
-        }
+        if (target) window.scrollTo({ top: target.offsetTop - getOffset(), behavior: 'smooth' });
       });
     });
 
-    // Scroll reveal
-    const revealEls = document.querySelectorAll('.reveal');
+    // ── Scroll reveal ───────────────────────────────────────
     const obs = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
     }, { threshold: 0.08 });
-    revealEls.forEach(el => obs.observe(el));
-
-    // Hamburger
-    const hamburger = document.getElementById('hamburger');
-    const navLinks  = document.querySelector('.nav-links');
-    let menuOpen = false;
-    hamburger.addEventListener('click', () => {
-      menuOpen = !menuOpen;
-      if (menuOpen) {
-        Object.assign(navLinks.style, { display: 'flex', flexDirection: 'column', position: 'absolute', top: '100%', left: 0, right: 0, background: '#141414', padding: '1.5rem 6vw', borderTop: '1px solid #1e1e1e', gap: '1.2rem' });
-      } else {
-        navLinks.style.display = 'none';
-      }
-    });
-    // Close menu when a link is clicked
-    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-      menuOpen = false; navLinks.style.display = 'none';
-    }));
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
   </script>
 </body>
 </html>
